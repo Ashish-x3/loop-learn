@@ -6,9 +6,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import DailyChallenge from '@/components/DailyChallenge';
-import TopicSearch from '@/components/TopicSearch';
+// import TopicSearch from '@/components/TopicSearch'; // Removed inline TopicSearch
 import StatsSection from '@/components/StatsSection';
 import FloatingDock from '@/components/FloatingDock';
+import { Link } from 'react-router-dom';
 
 const Dashboard = () => {
   const [showAchievements, setShowAchievements] = useState(false);
@@ -192,9 +193,22 @@ const Dashboard = () => {
           <DailyChallenge />
         </section>
 
-        {/* Topic Search - Replaces Topic Categories */}
-        <section>
-          <TopicSearch />
+        {/* Learn a New Topic Button */}
+        <section className="flex flex-col items-center">
+          <div className="text-center space-y-3 sm:space-y-4">
+            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black dark:text-white">
+              Learn a New Topic
+            </h2>
+            <p className="text-sm sm:text-base lg:text-lg text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+              Use our AI Flashcard Generator to create personalized flashcards on any concept you want to master.
+            </p>
+            <Link to="/create">
+              <Button className="mt-4 bg-primary hover:bg-primary/90 text-primary-foreground text-base sm:text-lg px-6 py-4">
+                <Plus className="mr-2 w-5 h-5" />
+                Go to Flashcard Generator
+              </Button>
+            </Link>
+          </div>
         </section>
 
         {/* Stats and Progress */}
@@ -293,3 +307,4 @@ const Dashboard = () => {
 };
 
 export default Dashboard;
+
