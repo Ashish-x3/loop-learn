@@ -1,40 +1,68 @@
 
 import { Trophy, Target, Zap, Calendar, TrendingUp, Star } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
+import { useUserProgress } from '@/hooks/useUserProgress';
+import { useAchievements } from '@/hooks/useAchievements';
 
 const StatsSection = () => {
+  const { data: userProgress, isLoading: progressLoading } = useUserProgress();
+  const { data: achievements, isLoading: achievementsLoading } = useAchievements();
+
+  if (progressLoading || achievementsLoading) {
+    return (
+      <div className="space-y-8 sm:space-y-12">
+        <div className="text-center space-y-3 sm:space-y-4 px-4">
+          <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black dark:text-white">
+            Your Progress
+          </h2>
+          <p className="text-sm sm:text-base lg:text-lg text-black/70 dark:text-white/70 max-w-2xl mx-auto">
+            Loading your progress...
+          </p>
+        </div>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-6">
+          {[1, 2, 3, 4].map((i) => (
+            <Card key={i} className="animate-pulse border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20">
+              <CardContent className="p-4 sm:p-6">
+                <div className="h-4 bg-gray-300 rounded w-3/4 mb-2"></div>
+                <div className="h-3 bg-gray-300 rounded w-1/2"></div>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    );
+  }
+
+  if (!userProgress) return null;
+
   const stats = [
     { 
       icon: Trophy, 
-      value: "42", 
+      value: userProgress.masteredCards.toString(), 
       label: "Cards Mastered", 
       change: "+12 this week"
     },
     { 
       icon: Target, 
-      value: "89%", 
+      value: `${userProgress.accuracy}%`, 
       label: "Accuracy Rate", 
       change: "+5% improvement"
     },
     { 
       icon: Zap, 
-      value: "7", 
+      value: userProgress.streak.toString(), 
       label: "Day Streak", 
       change: "Keep it up!"
     },
     { 
       icon: Calendar, 
-      value: "24m", 
+      value: `${userProgress.studyTime}m`, 
       label: "Study Time", 
       change: "Today"
     }
   ];
 
-  const achievements = [
-    { name: "Speed Demon", description: "10 cards in 2 minutes", progress: 85 },
-    { name: "Consistency King", description: "30 day streak", progress: 23 },
-    { name: "Knowledge Master", description: "100 cards mastered", progress: 42 }
-  ];
+  const latestAchievements = achievements?.slice(0, 3) || [];
 
   return (
     <div className="space-y-8 sm:space-y-12">
@@ -93,17 +121,19 @@ const StatsSection = () => {
           </div>
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 sm:gap-6">
-            {achievements.map((achievement, index) => (
-              <div key={achievement.name} className="space-y-2 sm:space-y-3">
+            {latestAchievements.map((achievement, index) => (
+              <div key={achievement.id} className="space-y-2 sm:space-y-3">
                 <div className="flex items-center justify-between">
-                  <h4 className="font-semibold text-black dark:text-white text-sm sm:text-base">{achievement.name}</h4>
-                  <span className="text-xs sm:text-sm text-black/70 dark:text-white/70">{achievement.progress}%</span>
+                  <h4 className="font-semibold text-black dark:text-white text-sm sm:text-base">{achievement.title}</h4>
+                  <span className="text-xs sm:text-sm text-black/70 dark:text-white/70">
+                    {achievement.unlocked ? '100%' : `${Math.round(achievement.progress || 0)}%`}
+                  </span>
                 </div>
                 <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">{achievement.description}</p>
                 <div className="w-full bg-white/20 dark:bg-black/20 rounded-full h-1.5 sm:h-2 backdrop-blur-sm">
                   <div 
                     className="bg-primary/80 h-1.5 sm:h-2 rounded-full transition-all duration-1000"
-                    style={{ width: `${achievement.progress}%` }}
+                    style={{ width: `${achievement.unlocked ? 100 : (achievement.progress || 0)}%` }}
                   />
                 </div>
               </div>
