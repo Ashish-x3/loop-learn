@@ -44,14 +44,14 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
   };
 
   return (
-    <div className="max-w-4xl mx-auto p-4">
+    <div className="max-w-4xl mx-auto p-2 sm:p-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
-        <div className="flex items-center space-x-3">
-          <Badge variant="secondary" className="text-purple-600 bg-purple-100">
+      <div className="flex items-center justify-between mb-4 sm:mb-6">
+        <div className="flex items-center space-x-2 sm:space-x-3">
+          <Badge variant="secondary" className="text-purple-600 bg-purple-100 text-xs sm:text-sm">
             {flashcard.category}
           </Badge>
-          <Badge variant="outline">
+          <Badge variant="outline" className="text-xs sm:text-sm">
             {flashcard.difficulty}
           </Badge>
         </div>
@@ -59,18 +59,18 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
           variant="outline"
           size="sm"
           onClick={handleReset}
-          className="flex items-center space-x-2"
+          className="flex items-center space-x-1 sm:space-x-2 text-xs sm:text-sm px-2 sm:px-3"
         >
-          <RotateCcw className="w-4 h-4" />
-          <span>Reset</span>
+          <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
+          <span className="hidden sm:inline">Reset</span>
         </Button>
       </div>
 
       {/* Flashcard */}
-      <div className="relative mb-8">
+      <div className="relative mb-6 sm:mb-8">
         <div className="perspective-1000">
           <div
-            className={`relative w-full h-96 transform-style-preserve-3d transition-transform duration-700 ${
+            className={`relative w-full h-80 sm:h-96 transform-style-preserve-3d transition-transform duration-700 ${
               isFlipped ? 'rotate-y-180' : ''
             }`}
           >
@@ -81,17 +81,17 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
               }`}
               onClick={handleFlip}
             >
-              <CardContent className="flex flex-col items-center justify-center h-full p-8 bg-gradient-to-br from-purple-500 to-blue-600 text-white rounded-lg">
-                <BookOpen className="w-12 h-12 mb-6 opacity-80" />
-                <h2 className="text-3xl font-bold text-center mb-4">
+              <CardContent className="flex flex-col items-center justify-center h-full p-4 sm:p-8 bg-gradient-to-br from-purple-500 to-blue-600 text-white rounded-lg">
+                <BookOpen className="w-8 h-8 sm:w-12 sm:h-12 mb-4 sm:mb-6 opacity-80" />
+                <h2 className="text-xl sm:text-3xl font-bold text-center mb-3 sm:mb-4">
                   {flashcard.topic}
                 </h2>
-                <p className="text-xl text-center text-purple-100 mb-8">
+                <p className="text-base sm:text-xl text-center text-purple-100 mb-6 sm:mb-8 px-2">
                   {flashcard.front}
                 </p>
-                <div className="text-sm text-purple-200 flex items-center">
+                <div className="text-xs sm:text-sm text-purple-200 flex items-center">
                   <span>Click to reveal answer</span>
-                  <ArrowRight className="w-4 h-4 ml-2" />
+                  <ArrowRight className="w-3 h-3 sm:w-4 sm:h-4 ml-1 sm:ml-2" />
                 </div>
               </CardContent>
             </Card>
@@ -102,75 +102,75 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
                 !isFlipped ? 'rotate-y-180' : ''
               }`}
             >
-              <CardContent className="h-full p-6 bg-white">
+              <CardContent className="h-full p-3 sm:p-6 bg-white">
                 <Tabs value={activeTab} onValueChange={setActiveTab} className="h-full">
-                  <TabsList className="grid w-full grid-cols-4 mb-6">
-                    <TabsTrigger value="definition" className="flex items-center space-x-2">
-                      <BookOpen className="w-4 h-4" />
-                      <span className="hidden sm:inline">Definition</span>
+                  <TabsList className="grid w-full grid-cols-4 mb-4 sm:mb-6 h-auto">
+                    <TabsTrigger value="definition" className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 p-2 text-xs">
+                      <BookOpen className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-[10px] sm:text-sm">Definition</span>
                     </TabsTrigger>
-                    <TabsTrigger value="analogy" className="flex items-center space-x-2">
-                      <Lightbulb className="w-4 h-4" />
-                      <span className="hidden sm:inline">Analogy</span>
+                    <TabsTrigger value="analogy" className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 p-2 text-xs">
+                      <Lightbulb className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-[10px] sm:text-sm">Analogy</span>
                     </TabsTrigger>
-                    <TabsTrigger value="usage" className="flex items-center space-x-2">
-                      <Target className="w-4 h-4" />
-                      <span className="hidden sm:inline">Usage</span>
+                    <TabsTrigger value="usage" className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 p-2 text-xs">
+                      <Target className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-[10px] sm:text-sm">Usage</span>
                     </TabsTrigger>
-                    <TabsTrigger value="code" className="flex items-center space-x-2">
-                      <Code className="w-4 h-4" />
-                      <span className="hidden sm:inline">Code</span>
+                    <TabsTrigger value="code" className="flex flex-col sm:flex-row items-center space-y-1 sm:space-y-0 sm:space-x-2 p-2 text-xs">
+                      <Code className="w-3 h-3 sm:w-4 sm:h-4" />
+                      <span className="text-[10px] sm:text-sm">Code</span>
                     </TabsTrigger>
                   </TabsList>
 
-                  <TabsContent value="definition" className="space-y-4">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <BookOpen className="w-5 h-5 text-purple-600" />
-                      <h3 className="text-xl font-bold text-gray-900">Simple Definition</h3>
+                  <TabsContent value="definition" className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                      <BookOpen className="w-4 h-4 sm:w-5 sm:h-5 text-purple-600" />
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900">Simple Definition</h3>
                     </div>
-                    <p className="text-lg text-gray-700 leading-relaxed">
+                    <p className="text-sm sm:text-lg text-gray-700 leading-relaxed">
                       {flashcard.back.definition}
                     </p>
                   </TabsContent>
 
-                  <TabsContent value="analogy" className="space-y-4">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Lightbulb className="w-5 h-5 text-yellow-600" />
-                      <h3 className="text-xl font-bold text-gray-900">Kid-Friendly Analogy</h3>
+                  <TabsContent value="analogy" className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                      <Lightbulb className="w-4 h-4 sm:w-5 sm:h-5 text-yellow-600" />
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900">Kid-Friendly Analogy</h3>
                     </div>
-                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
-                      <p className="text-lg text-gray-700 leading-relaxed">
+                    <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 sm:p-4 rounded">
+                      <p className="text-sm sm:text-lg text-gray-700 leading-relaxed">
                         {flashcard.back.analogy}
                       </p>
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="usage" className="space-y-4">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Target className="w-5 h-5 text-green-600" />
-                      <h3 className="text-xl font-bold text-gray-900">Real-World Use</h3>
+                  <TabsContent value="usage" className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                      <Target className="w-4 h-4 sm:w-5 sm:h-5 text-green-600" />
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900">Real-World Use</h3>
                     </div>
-                    <div className="bg-green-50 border-l-4 border-green-400 p-4 rounded">
-                      <p className="text-lg text-gray-700 leading-relaxed">
+                    <div className="bg-green-50 border-l-4 border-green-400 p-3 sm:p-4 rounded">
+                      <p className="text-sm sm:text-lg text-gray-700 leading-relaxed">
                         {flashcard.back.realWorldUse}
                       </p>
                     </div>
                   </TabsContent>
 
-                  <TabsContent value="code" className="space-y-4">
-                    <div className="flex items-center space-x-2 mb-4">
-                      <Code className="w-5 h-5 text-blue-600" />
-                      <h3 className="text-xl font-bold text-gray-900">Code Example</h3>
+                  <TabsContent value="code" className="space-y-3 sm:space-y-4">
+                    <div className="flex items-center space-x-2 mb-3 sm:mb-4">
+                      <Code className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                      <h3 className="text-lg sm:text-xl font-bold text-gray-900">Code Example</h3>
                     </div>
                     {flashcard.back.codeExample ? (
-                      <div className="bg-gray-900 text-gray-100 p-4 rounded-lg overflow-x-auto">
-                        <pre className="text-sm">
+                      <div className="bg-gray-900 text-gray-100 p-3 sm:p-4 rounded-lg overflow-x-auto">
+                        <pre className="text-xs sm:text-sm">
                           <code>{flashcard.back.codeExample}</code>
                         </pre>
                       </div>
                     ) : (
-                      <div className="bg-gray-50 border-2 border-dashed border-gray-300 p-8 rounded-lg text-center">
-                        <p className="text-gray-500">No code example available for this concept</p>
+                      <div className="bg-gray-50 border-2 border-dashed border-gray-300 p-6 sm:p-8 rounded-lg text-center">
+                        <p className="text-gray-500 text-sm">No code example available for this concept</p>
                       </div>
                     )}
                   </TabsContent>
@@ -181,38 +181,74 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
         </div>
       </div>
 
-      {/* Navigation */}
+      {/* Navigation - Mobile Optimized */}
       {showNavigation && (
-        <div className="flex items-center justify-between">
-          <Button
-            variant="outline"
-            onClick={onPrevious}
-            className="flex items-center space-x-2"
-            disabled={!onPrevious}
-          >
-            <ArrowLeft className="w-4 h-4" />
-            <span>Previous</span>
-          </Button>
-
-          <div className="flex items-center space-x-4">
+        <div className="flex flex-col sm:flex-row items-center justify-between gap-3 sm:gap-0">
+          {/* Mobile: Stack buttons vertically */}
+          <div className="flex flex-col sm:hidden w-full space-y-3">
             <Button
               variant={isFlipped ? "outline" : "default"}
               onClick={handleFlip}
-              className="px-8"
+              className="w-full py-3 text-base font-medium"
             >
               {isFlipped ? "Show Question" : "Show Answer"}
             </Button>
+            
+            <div className="flex space-x-3">
+              <Button
+                variant="outline"
+                onClick={onPrevious}
+                className="flex-1 flex items-center justify-center space-x-2 py-3"
+                disabled={!onPrevious}
+              >
+                <ArrowLeft className="w-4 h-4" />
+                <span>Previous</span>
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={onNext}
+                className="flex-1 flex items-center justify-center space-x-2 py-3"
+                disabled={!onNext}
+              >
+                <span>Next</span>
+                <ArrowRight className="w-4 h-4" />
+              </Button>
+            </div>
           </div>
 
-          <Button
-            variant="outline"
-            onClick={onNext}
-            className="flex items-center space-x-2"
-            disabled={!onNext}
-          >
-            <span>Next</span>
-            <ArrowRight className="w-4 h-4" />
-          </Button>
+          {/* Desktop: Original layout */}
+          <div className="hidden sm:flex items-center justify-between w-full">
+            <Button
+              variant="outline"
+              onClick={onPrevious}
+              className="flex items-center space-x-2"
+              disabled={!onPrevious}
+            >
+              <ArrowLeft className="w-4 h-4" />
+              <span>Previous</span>
+            </Button>
+
+            <div className="flex items-center space-x-4">
+              <Button
+                variant={isFlipped ? "outline" : "default"}
+                onClick={handleFlip}
+                className="px-8"
+              >
+                {isFlipped ? "Show Question" : "Show Answer"}
+              </Button>
+            </div>
+
+            <Button
+              variant="outline"
+              onClick={onNext}
+              className="flex items-center space-x-2"
+              disabled={!onNext}
+            >
+              <span>Next</span>
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </div>
         </div>
       )}
     </div>

@@ -22,12 +22,12 @@ const FloatingDock = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-3">
-      <div className="relative backdrop-blur-xl bg-white/90 dark:bg-black/80 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-3xl p-4 md:p-5 overflow-x-auto md:overflow-visible">
+    <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-2 sm:px-3 w-full max-w-sm sm:max-w-none sm:w-auto">
+      <div className="relative backdrop-blur-xl bg-white/90 dark:bg-black/80 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5">
         {/* Enhanced glassmorphic background */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-white/20 dark:from-black/10 dark:to-black/20 rounded-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-white/20 dark:from-black/10 dark:to-black/20 rounded-2xl sm:rounded-3xl" />
         
-        <div className="relative flex items-end justify-center gap-3 md:gap-4 px-2">
+        <div className="relative flex items-end justify-center gap-2 sm:gap-3 md:gap-4 px-1 sm:px-2">
           {dockItems.map((item, index) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -49,11 +49,11 @@ const FloatingDock = () => {
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
                   zIndex: isHovered ? 10 : 1,
-                  minWidth: '52px',
-                  minHeight: '64px'
+                  minWidth: window.innerWidth < 640 ? '44px' : '52px',
+                  minHeight: window.innerWidth < 640 ? '56px' : '64px'
                 }}
               >
-                {/* Enhanced Tooltip */}
+                {/* Enhanced Tooltip - Hidden on mobile */}
                 <div className={cn(
                   "absolute bottom-full mb-3 px-3 py-1.5 bg-black/90 dark:bg-white/90 text-white dark:text-black text-sm rounded-xl opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap backdrop-blur-sm shadow-xl hidden md:block",
                   isHovered && "opacity-100 -translate-y-2"
@@ -68,8 +68,8 @@ const FloatingDock = () => {
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "relative rounded-2xl transition-all duration-300 ease-out border-0 hover:bg-transparent touch-manipulation active:scale-90",
-                      "w-12 h-12 sm:w-13 sm:h-13 md:w-14 md:h-14 flex items-center justify-center"
+                      "relative rounded-xl sm:rounded-2xl transition-all duration-300 ease-out border-0 hover:bg-transparent touch-manipulation active:scale-90",
+                      "w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center"
                     )}
                     style={{
                       transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 10) : 0}px)`,
@@ -78,7 +78,7 @@ const FloatingDock = () => {
                   >
                     {/* Enhanced icon background */}
                     <div className={cn(
-                      "absolute inset-0 rounded-2xl transition-all duration-300 backdrop-blur-sm",
+                      "absolute inset-0 rounded-xl sm:rounded-2xl transition-all duration-300 backdrop-blur-sm",
                       active ? 
                         "bg-blue-500/90 shadow-xl shadow-blue-500/30 border border-blue-400/50" :
                         "bg-white/30 dark:bg-black/30 hover:bg-white/40 dark:hover:bg-black/40 border border-white/30 dark:border-white/20 shadow-lg"
@@ -86,13 +86,13 @@ const FloatingDock = () => {
                     
                     <Icon className={cn(
                       "relative z-10 transition-colors duration-300",
-                      "w-6 h-6 sm:w-6 sm:h-6 md:w-7 md:h-7",
+                      "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7",
                       active ? "text-white" : "text-black dark:text-white"
                     )} />
                     
                     {/* Enhanced active indicator */}
                     {active && (
-                      <div className="absolute -bottom-1 w-2 h-2 bg-white rounded-full shadow-lg" />
+                      <div className="absolute -bottom-0.5 sm:-bottom-1 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full shadow-lg" />
                     )}
                   </Button>
                 </Link>
