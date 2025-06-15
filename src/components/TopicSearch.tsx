@@ -26,8 +26,8 @@ const TopicSearch = () => {
   const { toast } = useToast();
 
   const suggestedTopics = [
-    'React Hooks', 'JavaScript ES6', 'CSS Flexbox', 'Node.js Basics', 
-    'Python Functions', 'Data Structures', 'Git Commands', 'API Design'
+    'React Hooks', 'JavaScript Promises', 'CSS Grid', 'Python Functions', 
+    'Data Structures', 'Git Commands', 'API Design', 'Database Queries'
   ];
 
   const handleSearch = async () => {
@@ -63,19 +63,29 @@ const TopicSearch = () => {
         return;
       }
 
-      // If no existing cards, generate new ones
-      const response = await supabase.functions.invoke('generate-flashcards', {
-        body: { topic: searchTerm }
+      // If no existing cards, generate new ones using the improved endpoint
+      const response = await supabase.functions.invoke('generate-gemini-flashcards', {
+        body: { topics: [searchTerm] }
       });
 
       if (response.error) throw response.error;
 
-      const { flashcards, generated, message } = response.data;
-      setSearchResults(flashcards || []);
+      const { flashcards, message } = response.data;
+      
+      // Fetch the newly created flashcards from database
+      const { data: newCards, error: fetchError } = await supabase
+        .from('flashcards')
+        .select('*')
+        .ilike('topic', `%${searchTerm.toLowerCase()}%`)
+        .order('created_at', { ascending: false });
+
+      if (fetchError) throw fetchError;
+
+      setSearchResults(newCards || []);
       
       toast({
-        title: generated ? "Flashcards Generated!" : "Flashcards Found!",
-        description: message
+        title: "Flashcards Generated!",
+        description: message || `Created flashcards for "${searchTerm}"`
       });
 
     } catch (error) {

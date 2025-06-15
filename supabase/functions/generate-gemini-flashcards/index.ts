@@ -1,142 +1,187 @@
 
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2.50.0';
 
-// Prepare CORS headers
 const corsHeaders = {
-  "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+  'Access-Control-Allow-Origin': '*',
+  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
-// Gemini API config
-const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
-
-// Helper: generate flashcards with Gemini API
-async function generateWithGemini(topic: string) {
-  if (!GEMINI_API_KEY) {
-    console.error("[Gemini] API key is missing.");
-  } else {
-    console.info("[Gemini] API key loaded, length:", GEMINI_API_KEY.length);
-  }
-
-  const prompt = `
-Act as a kids' coding teacher specializing in breaking down complex tech topics.
-For the topic "${topic}", create exactly 5 flashcards.
-Each flashcard must be a JSON object with:
-1.  "front": A clear, concise question.
-2.  "back": An object containing:
-    - "definition": (string) A simple, one-sentence definition for a beginner.
-    - "analogy": (string) A relatable, kid-friendly analogy.
-    - "realWorldUse": (string) A practical, real-world use case.
-    - "codeExample": (string) A short, relevant code snippet in a single line with escaped newlines (e.g., "const x = 1;\\nconsole.log(x);"). If not applicable, use an empty string.
-3.  "difficulty": (string) "Beginner", "Intermediate", or "Advanced".
-
-Return ONLY a valid JSON array of these objects, like this example:
-[
-  {
-    "front": "What is a JavaScript Promise?",
-    "back": {
-      "definition": "A promise is an object that represents the eventual completion (or failure) of an asynchronous operation and its resulting value.",
-      "analogy": "It's like ordering a pizza. You get a receipt (the promise) that tells you you'll get your pizza later.",
-      "realWorldUse": "Fetching user data from a server without freezing the webpage.",
-      "codeExample": "const fetchData = () => {\\n  return new Promise((resolve, reject) => {\\n    setTimeout(() => resolve('Data received!'), 2000);\\n  });\\n};"
-    },
-    "difficulty": "Intermediate"
-  }
-]
-  `;
-  const body = {
-    contents: [{ parts: [{ text: prompt }] }]
+// Function to automatically categorize topics
+function categorizeTopics(topics: string[]): Record<string, string> {
+  const categories: Record<string, string> = {};
+  
+  const categoryKeywords = {
+    'JavaScript': ['javascript', 'js', 'promise', 'async', 'await', 'closure', 'hoisting', 'prototype', 'arrow', 'function', 'variable', 'scope', 'dom', 'event', 'callback', 'es6', 'es2015', 'node', 'npm'],
+    'React': ['react', 'jsx', 'component', 'props', 'state', 'hook', 'usestate', 'useeffect', 'context', 'reducer', 'virtual dom', 'lifecycle'],
+    'CSS': ['css', 'flexbox', 'grid', 'animation', 'transition', 'media query', 'responsive', 'bootstrap', 'sass', 'scss', 'selector', 'box model', 'position', 'display'],
+    'HTML': ['html', 'semantic', 'accessibility', 'form', 'input', 'meta', 'head', 'body', 'div', 'span'],
+    'Python': ['python', 'django', 'flask', 'pandas', 'numpy', 'list comprehension', 'decorator', 'lambda', 'class', 'inheritance'],
+    'Data Structures': ['array', 'linked list', 'stack', 'queue', 'tree', 'graph', 'hash table', 'heap', 'binary search', 'sorting'],
+    'Algorithms': ['algorithm', 'complexity', 'big o', 'recursion', 'dynamic programming', 'greedy', 'divide and conquer', 'search', 'sort'],
+    'Database': ['sql', 'database', 'mysql', 'postgresql', 'mongodb', 'nosql', 'query', 'join', 'index', 'transaction'],
+    'Web Development': ['http', 'api', 'rest', 'graphql', 'ajax', 'fetch', 'cors', 'authentication', 'authorization', 'session'],
+    'DevOps': ['docker', 'kubernetes', 'ci/cd', 'git', 'deployment', 'server', 'cloud', 'aws', 'azure', 'gcp'],
+    'Programming': ['oop', 'functional programming', 'design pattern', 'solid', 'dry', 'clean code', 'testing', 'debugging']
   };
 
-  const response = await fetch(`${GEMINI_API_URL}?key=${GEMINI_API_KEY}`, {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(body)
+  topics.forEach(topic => {
+    const topicLower = topic.toLowerCase();
+    let bestMatch = 'Programming'; // Default category
+    let maxMatches = 0;
+
+    Object.entries(categoryKeywords).forEach(([category, keywords]) => {
+      const matches = keywords.filter(keyword => 
+        topicLower.includes(keyword) || keyword.includes(topicLower)
+      ).length;
+      
+      if (matches > maxMatches) {
+        maxMatches = matches;
+        bestMatch = category;
+      }
+    });
+
+    categories[topic] = bestMatch;
   });
 
-  // Improved error logging
-  if (!response.ok) {
-    const errorText = await response.text();
-    console.error("[Gemini Error] Status:", response.status, response.statusText);
-    console.error("[Gemini Error] Body:", errorText);
-    throw new Error("Failed to generate flashcards from Gemini");
-  }
-
-  const data = await response.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  const jsonArrayStr = text.match(/\[\s*{[\s\S]*?}\s*\]/)?.[0];
-  if (!jsonArrayStr) throw new Error("Could not parse Gemini response as flashcards");
-  const flashcards = JSON.parse(jsonArrayStr);
-  return flashcards;
+  return categories;
 }
 
 serve(async (req) => {
-  // CORS preflight
-  if (req.method === "OPTIONS") {
+  if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { topic } = await req.json();
-    if (!topic || typeof topic !== "string") {
-      return new Response(JSON.stringify({ error: "Missing or invalid topic" }), {
-        status: 400,
-        headers: { ...corsHeaders, "Content-Type": "application/json" }
+    const supabaseClient = createClient(
+      Deno.env.get('SUPABASE_URL') ?? '',
+      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+    );
+
+    const { topics } = await req.json();
+    
+    if (!topics || !Array.isArray(topics) || topics.length === 0) {
+      return new Response(
+        JSON.stringify({ error: 'Please provide an array of topics' }),
+        { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    const geminiApiKey = Deno.env.get('GEMINI_API_KEY');
+    if (!geminiApiKey) {
+      return new Response(
+        JSON.stringify({ error: 'Gemini API key not configured' }),
+        { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+      );
+    }
+
+    // Auto-categorize topics
+    const topicCategories = categorizeTopics(topics);
+    console.log('Auto-categorized topics:', topicCategories);
+
+    const allFlashcards = [];
+
+    for (const topic of topics) {
+      const category = topicCategories[topic];
+      
+      const prompt = `Create exactly 3 educational flashcards about "${topic}" in the "${category}" category. 
+
+For each flashcard, provide:
+1. A clear, specific question about the topic
+2. A comprehensive answer with these 4 sections:
+   - definition: A simple, clear explanation (1-2 sentences)
+   - analogy: A kid-friendly analogy with emojis that makes it easy to understand
+   - realWorldUse: Practical applications and when to use it
+   - codeExample: A relevant code example (if applicable, otherwise provide a practical example)
+
+Format your response as a JSON array with this exact structure:
+[
+  {
+    "topic": "${topic}",
+    "category": "${category}",
+    "difficulty": "Beginner|Intermediate|Advanced",
+    "question": "Clear, specific question",
+    "answer": {
+      "definition": "Simple explanation",
+      "analogy": "Kid-friendly analogy with emojis",
+      "realWorldUse": "Practical applications",
+      "codeExample": "Code example or practical example"
+    }
+  }
+]
+
+Make sure the difficulty is appropriate for the complexity of the concept.`;
+
+      const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent?key=${geminiApiKey}`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({
+          contents: [{
+            parts: [{ text: prompt }]
+          }]
+        }),
       });
+
+      if (!response.ok) {
+        console.error(`Gemini API error for topic ${topic}:`, response.status, response.statusText);
+        continue;
+      }
+
+      const data = await response.json();
+      const generatedText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!generatedText) {
+        console.error(`No content generated for topic: ${topic}`);
+        continue;
+      }
+
+      try {
+        const cleanedText = generatedText.replace(/```json\n?/g, '').replace(/```\n?/g, '').trim();
+        const flashcards = JSON.parse(cleanedText);
+
+        if (Array.isArray(flashcards)) {
+          for (const flashcard of flashcards) {
+            const { data: savedCard, error: saveError } = await supabaseClient
+              .from('flashcards')
+              .insert({
+                topic: flashcard.topic.toLowerCase(),
+                question: flashcard.question,
+                answer: JSON.stringify(flashcard.answer),
+                difficulty: flashcard.difficulty.toLowerCase(),
+              })
+              .select()
+              .single();
+
+            if (saveError) {
+              console.error('Error saving flashcard:', saveError);
+            } else {
+              allFlashcards.push(savedCard);
+            }
+          }
+        }
+      } catch (parseError) {
+        console.error(`Error parsing JSON for topic ${topic}:`, parseError);
+        console.error('Generated text:', generatedText);
+      }
     }
 
-    // Supabase client for edge functions
-    const { createClient } = await import("https://esm.sh/@supabase/supabase-js@2.50.0");
-    const supabaseUrl = Deno.env.get("SUPABASE_URL");
-    const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    return new Response(
+      JSON.stringify({
+        message: `Generated ${allFlashcards.length} flashcards for ${topics.length} topics`,
+        flashcards: allFlashcards,
+        categories: topicCategories
+      }),
+      { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
 
-    // 1. Check DB for existing flashcards (case-insensitive)
-    const { data: existing, error } = await supabase
-      .from("flashcards")
-      .select("*")
-      .ilike("topic", topic.toLowerCase())
-      .order("created_at", { ascending: false });
-
-    if (error) throw error;
-    if (existing && existing.length > 0) {
-      return new Response(JSON.stringify({
-        source: "existing",
-        flashcards: existing
-      }), { headers: { ...corsHeaders, "Content-Type": "application/json" }});
-    }
-
-
-    // 2. If none, generate new flashcards
-    const cards = await generateWithGemini(topic);
-
-    // Format + insert into db (all with lowercase topic for deduplication)
-    const toInsert = cards.map((card: any) => ({
-      topic: topic.toLowerCase(),
-      question: card.front,
-      answer: JSON.stringify(card.back),
-      difficulty: card.difficulty || "Beginner"
-    }));
-
-    const { data: inserted, error: insertError } = await supabase
-      .from("flashcards")
-      .insert(toInsert)
-      .select("*");
-
-    if (insertError) throw insertError;
-
-    return new Response(JSON.stringify({
-      source: "generated",
-      flashcards: inserted
-    }), { headers: { ...corsHeaders, "Content-Type": "application/json" }});
-
-  } catch (err: any) {
-    console.error("[generate-gemini-flashcards] error:", err);
-    return new Response(JSON.stringify({ error: err.message || String(err) }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" }
-    });
+  } catch (error) {
+    console.error('Error in generate-gemini-flashcards function:', error);
+    return new Response(
+      JSON.stringify({ error: error.message }),
+      { status: 500, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+    );
   }
 });
