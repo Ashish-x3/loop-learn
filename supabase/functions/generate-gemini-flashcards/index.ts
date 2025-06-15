@@ -1,4 +1,3 @@
-
 import "https://deno.land/x/xhr@0.1.0/mod.ts";
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 
@@ -10,11 +9,10 @@ const corsHeaders = {
 
 // Gemini API config
 const GEMINI_API_KEY = Deno.env.get("GEMINI_API_KEY");
-const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent";
+const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash-latest:generateContent";
 
 // Helper: generate flashcards with Gemini API
 async function generateWithGemini(topic: string) {
-  // Debug logging about key
   if (!GEMINI_API_KEY) {
     console.error("[Gemini] API key is missing.");
   } else {
