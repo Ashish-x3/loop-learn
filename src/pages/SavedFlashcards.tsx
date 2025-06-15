@@ -46,13 +46,6 @@ const SavedFlashcards = () => {
     return colorMap[category] || 'from-gray-500 to-slate-600';
   };
 
-  // Function to create URL-safe topic slug - converts "CSS Grid" to "css-grid"
-  const createTopicSlug = (topic: string) => {
-    // Convert topic to lowercase and replace spaces with hyphens, then URL encode
-    const slug = topic.toLowerCase().replace(/\s+/g, '-');
-    return encodeURIComponent(slug);
-  };
-
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -143,22 +136,19 @@ const SavedFlashcards = () => {
                       Available Topics
                     </h4>
                     <div className="grid gap-2">
-                      {categoryData.topics.map((topic) => {
-                        const topicSlug = createTopicSlug(topic);
-                        return (
-                          <Link key={topic} to={`/learn/${topicSlug}`}>
-                            <Button 
-                              variant="ghost" 
-                              className="w-full justify-start h-auto p-3 text-left hover:bg-primary/5"
-                            >
-                              <div>
-                                <div className="font-medium">{topic}</div>
-                                <div className="text-xs text-muted-foreground">Start learning</div>
-                              </div>
-                            </Button>
-                          </Link>
-                        );
-                      })}
+                      {categoryData.topics.map((topic) => (
+                        <Link key={topic} to={`/learn/${topic}`}>
+                          <Button 
+                            variant="ghost" 
+                            className="w-full justify-start h-auto p-3 text-left hover:bg-primary/5"
+                          >
+                            <div>
+                              <div className="font-medium capitalize">{topic.replace(/-/g, ' ')}</div>
+                              <div className="text-xs text-muted-foreground">Start learning</div>
+                            </div>
+                          </Button>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 </CardContent>

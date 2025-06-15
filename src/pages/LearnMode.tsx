@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Home, RotateCcw, Moon, Sun, Loader2, BookOpen } from 'lucide-react';
+import { ArrowLeft, Home, RotateCcw, Moon, Sun, Loader2 } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FlashcardView from '@/components/FlashcardView';
@@ -22,14 +22,41 @@ const LearnMode = () => {
   // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // Filter flashcards by topic if a topic is present in the URL
-  const flashcards = topic
+  // Filter flashcards by exact topic match with strict comparison
+  const flashcards = topic 
     ? allFlashcards.filter(card => {
+        // Decode the URL topic parameter
         const decodedTopic = decodeURIComponent(topic);
-        const topicToMatch = decodedTopic.replace(/-/g, ' ').toLowerCase();
-        return card.topic.toLowerCase() === topicToMatch;
+        
+        // Convert URL slug back to original format: "css-grid" -> "CSS Grid"
+        const urlTopicWords = decodedTopic.split('-');
+        const reconstructedTopic = urlTopicWords.map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        ).join(' ');
+        
+        // Also try exact case-insensitive match for edge cases
+        const exactCaseInsensitiveMatch = card.topic.toLowerCase() === decodedTopic.replace(/-/g, ' ').toLowerCase();
+        const reconstructedMatch = card.topic === reconstructedTopic;
+        
+        console.log('Filtering flashcards:', {
+          urlTopic: topic,
+          decodedTopic,
+          reconstructedTopic,
+          cardTopic: card.topic,
+          exactCaseInsensitiveMatch,
+          reconstructedMatch,
+          finalMatch: exactCaseInsensitiveMatch || reconstructedMatch
+        });
+        
+        // Only include cards that exactly match
+        return exactCaseInsensitiveMatch || reconstructedMatch;
       })
-    : []; // If no topic, start with an empty array
+    : allFlashcards;
+  
+  console.log('Topic from URL:', topic);
+  console.log('All available topics:', [...new Set(allFlashcards.map(f => f.topic))]);
+  console.log('Filtered flashcards count:', flashcards.length);
+  console.log('Filtered flashcards topics:', [...new Set(flashcards.map(f => f.topic))]);
 
   // Reset state when topic changes
   useEffect(() => {
@@ -124,26 +151,8 @@ const LearnMode = () => {
     );
   }
 
-  // Show a prompt to select a topic if none is in the URL
-  if (!topic) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4 p-4">
-          <BookOpen className="w-12 h-12 mx-auto text-primary" />
-          <h2 className="text-2xl font-bold">Select a Topic to Learn</h2>
-          <p className="text-muted-foreground">
-            Please choose a topic from your dashboard to start a learning session.
-          </p>
-          <Link to="/dashboard">
-            <Button>Back to Dashboard</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   // Show message if no flashcards found for specific topic
-  if (flashcards.length === 0) {
+  if (topic && flashcards.length === 0) {
     const decodedTopic = decodeURIComponent(topic);
     const topicDisplayName = decodedTopic.replace(/-/g, ' ');
 
@@ -209,7 +218,6 @@ const LearnMode = () => {
   };
 
   if (!currentCard) {
-    // This case should ideally not be reached if flashcards.length > 0, but serves as a fallback.
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
