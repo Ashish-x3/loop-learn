@@ -22,7 +22,7 @@ const FloatingDock = () => {
 
   return (
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl shadow-black/10 dark:shadow-black/25 p-3">
+      <div className="backdrop-blur-xl bg-white/90 dark:bg-slate-900/90 border border-slate-200/50 dark:border-slate-700/50 rounded-3xl shadow-2xl shadow-slate-500/10 dark:shadow-black/25 p-3">
         <div className="flex items-center gap-2">
           {dockItems.map((item, index) => {
             const Icon = item.icon;
@@ -53,7 +53,7 @@ const FloatingDock = () => {
                     size="icon"
                     className={`relative w-14 h-14 rounded-2xl transition-all duration-300 ${
                       active 
-                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg hover:shadow-xl scale-110' 
+                        ? 'bg-gradient-to-r from-emerald-500 to-teal-500 text-white shadow-lg hover:shadow-xl scale-110' 
                         : 'hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-110'
                     } ${
                       isHovered && !active ? 'scale-125 bg-slate-100 dark:bg-slate-800' : ''
@@ -64,7 +64,7 @@ const FloatingDock = () => {
                     }`} />
                     
                     {active && (
-                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-pulse" />
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-emerald-500/20 to-teal-500/20 animate-pulse" />
                     )}
                   </Button>
                 </Link>
@@ -76,7 +76,7 @@ const FloatingDock = () => {
         {/* Activity indicator */}
         <div className="flex items-center justify-center mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
           <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
-            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <div className="w-2 h-2 bg-emerald-500 rounded-full animate-pulse" />
             <span className="font-medium">7 day streak 🔥</span>
           </div>
         </div>

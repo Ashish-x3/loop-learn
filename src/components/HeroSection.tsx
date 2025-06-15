@@ -21,12 +21,12 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-purple-50 dark:from-slate-950 dark:via-slate-900 dark:to-purple-950">
+    <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
       {/* Floating orbs background */}
       <div className="absolute inset-0 overflow-hidden">
-        <div className="absolute top-1/4 left-1/4 w-64 h-64 bg-purple-200/30 dark:bg-purple-500/10 rounded-full blur-3xl animate-pulse" />
-        <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-blue-200/20 dark:bg-blue-500/10 rounded-full blur-3xl animate-pulse delay-1000" />
-        <div className="absolute top-3/4 left-1/2 w-48 h-48 bg-pink-200/25 dark:bg-pink-500/10 rounded-full blur-3xl animate-pulse delay-500" />
+        <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-emerald-200/20 to-teal-200/20 dark:from-emerald-500/10 dark:to-teal-500/10 rounded-full blur-2xl animate-pulse" />
+        <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-blue-200/15 to-cyan-200/15 dark:from-blue-500/8 dark:to-cyan-500/8 rounded-full blur-2xl animate-pulse delay-1000" />
+        <div className="absolute top-3/4 left-1/2 w-64 h-64 bg-gradient-to-r from-slate-200/10 to-gray-200/10 dark:from-slate-500/5 dark:to-gray-500/5 rounded-full blur-2xl animate-pulse delay-500" />
       </div>
 
       {/* Main content */}
@@ -34,11 +34,11 @@ const HeroSection = () => {
         {/* Logo/Icon */}
         <div className="flex justify-center mb-8">
           <div className="relative">
-            <div className="w-20 h-20 bg-gradient-to-r from-purple-500 to-blue-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-purple-500/25 rotate-3 hover:rotate-0 transition-transform duration-700">
+            <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/20 rotate-3 hover:rotate-0 transition-transform duration-700">
               <Brain className="w-10 h-10 text-white" />
             </div>
-            <div className="absolute -top-2 -right-2 w-6 h-6 bg-yellow-400 rounded-full flex items-center justify-center">
-              <Sparkles className="w-3 h-3 text-yellow-800" />
+            <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
+              <Sparkles className="w-3 h-3 text-amber-800" />
             </div>
           </div>
         </div>
@@ -46,7 +46,7 @@ const HeroSection = () => {
         {/* Dynamic headline */}
         <div className="space-y-4">
           <h1 className="text-7xl md:text-8xl font-black tracking-tight">
-            <span className="bg-gradient-to-r from-slate-900 via-purple-900 to-slate-900 dark:from-white dark:via-purple-200 dark:to-white bg-clip-text text-transparent">
+            <span className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
               {phrases[currentPhrase]}
             </span>
           </h1>
@@ -59,7 +59,7 @@ const HeroSection = () => {
         {/* CTA Buttons */}
         <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
           <Link to="/learn">
-            <Button className="group relative overflow-hidden bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-2xl shadow-purple-500/25 hover:shadow-purple-500/40 transition-all duration-300 hover:-translate-y-1">
+            <Button className="group relative overflow-hidden bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-2xl shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1">
               <span className="relative z-10 flex items-center gap-3">
                 <Play className="w-5 h-5" />
                 Start Learning

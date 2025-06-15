@@ -12,12 +12,12 @@ const DailyChallenge = () => {
 
   return (
     <div className="relative">
-      <Card className="group overflow-hidden border-0 bg-gradient-to-br from-orange-50 via-amber-50 to-yellow-50 dark:from-orange-950/50 dark:via-amber-950/50 dark:to-yellow-950/50 shadow-xl shadow-orange-500/10 hover:shadow-2xl hover:shadow-orange-500/20 transition-all duration-500 hover:-translate-y-2">
+      <Card className="group overflow-hidden border-0 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900/50 dark:via-slate-800/50 dark:to-slate-900/50 shadow-xl shadow-slate-500/5 hover:shadow-2xl hover:shadow-slate-500/10 transition-all duration-500 hover:-translate-y-2">
         <CardContent className="p-8">
           {/* Header */}
           <div className="flex items-center justify-between mb-6">
             <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-orange-500 to-amber-500 rounded-2xl flex items-center justify-center shadow-lg">
+              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
                 <Target className="w-6 h-6 text-white" />
               </div>
               <div>
@@ -27,12 +27,12 @@ const DailyChallenge = () => {
             </div>
             
             {completed ? (
-              <div className="flex items-center gap-2 bg-green-100 dark:bg-green-900/50 px-4 py-2 rounded-xl">
-                <CheckCircle className="w-5 h-5 text-green-600 dark:text-green-400" />
-                <span className="text-sm font-medium text-green-700 dark:text-green-300">Complete!</span>
+              <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl">
+                <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
+                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Complete!</span>
               </div>
             ) : (
-              <div className="flex items-center gap-2 text-orange-600 dark:text-orange-400">
+              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
                 <Clock className="w-5 h-5" />
                 <span className="text-sm font-medium">8h left</span>
               </div>
@@ -47,7 +47,7 @@ const DailyChallenge = () => {
             </div>
             <Progress 
               value={progress} 
-              className="h-3 bg-orange-100 dark:bg-orange-900/50"
+              className="h-3 bg-slate-100 dark:bg-slate-800"
             />
           </div>
 
@@ -63,7 +63,7 @@ const DailyChallenge = () => {
 
             <Link to="/learn">
               <Button 
-                className="bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-600 hover:to-amber-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 rounded-xl group"
+                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 rounded-xl group"
                 onClick={() => !completed && setCompleted(true)}
               >
                 <span className="flex items-center gap-2">
@@ -76,8 +76,8 @@ const DailyChallenge = () => {
         </CardContent>
 
         {/* Decorative elements */}
-        <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-amber-200/30 to-orange-200/30 rounded-full blur-xl" />
-        <div className="absolute bottom-4 left-4 w-16 h-16 bg-gradient-to-br from-yellow-200/30 to-amber-200/30 rounded-full blur-xl" />
+        <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-emerald-200/20 to-teal-200/20 rounded-full blur-lg" />
+        <div className="absolute bottom-4 left-4 w-16 h-16 bg-gradient-to-br from-slate-200/20 to-gray-200/20 rounded-full blur-lg" />
       </Card>
     </div>
   );

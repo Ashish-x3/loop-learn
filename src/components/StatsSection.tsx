@@ -9,32 +9,32 @@ const StatsSection = () => {
       value: "42", 
       label: "Cards Mastered", 
       change: "+12 this week",
-      color: "from-yellow-500 to-amber-500",
-      bgColor: "from-yellow-50 to-amber-50 dark:from-yellow-950/50 dark:to-amber-950/50"
+      color: "from-amber-500 to-yellow-500",
+      bgColor: "from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50"
     },
     { 
       icon: Target, 
       value: "89%", 
       label: "Accuracy Rate", 
       change: "+5% improvement",
-      color: "from-green-500 to-emerald-500",
-      bgColor: "from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50"
+      color: "from-emerald-500 to-teal-500",
+      bgColor: "from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/50"
     },
     { 
       icon: Zap, 
       value: "7", 
       label: "Day Streak", 
       change: "Keep it up!",
-      color: "from-orange-500 to-red-500",
-      bgColor: "from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50"
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50"
     },
     { 
       icon: Calendar, 
       value: "24m", 
       label: "Study Time", 
       change: "Today",
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50"
+      color: "from-slate-600 to-slate-700",
+      bgColor: "from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50"
     }
   ];
 
@@ -67,7 +67,7 @@ const StatsSection = () => {
                   <div className={`w-12 h-12 bg-gradient-to-r ${stat.color} rounded-xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
                     <Icon className="w-6 h-6 text-white" />
                   </div>
-                  <TrendingUp className="w-5 h-5 text-green-500" />
+                  <TrendingUp className="w-5 h-5 text-emerald-500" />
                 </div>
                 
                 <div className="space-y-1">
@@ -77,13 +77,13 @@ const StatsSection = () => {
                   <div className="text-sm text-slate-600 dark:text-slate-400">
                     {stat.label}
                   </div>
-                  <div className="text-xs text-green-600 dark:text-green-400 font-medium">
+                  <div className="text-xs text-emerald-600 dark:text-emerald-400 font-medium">
                     {stat.change}
                   </div>
                 </div>
 
                 {/* Decorative element */}
-                <div className={`absolute bottom-2 right-2 w-16 h-16 bg-gradient-to-br ${stat.color} opacity-10 rounded-full blur-xl group-hover:opacity-20 transition-opacity`} />
+                <div className={`absolute bottom-2 right-2 w-16 h-16 bg-gradient-to-br ${stat.color} opacity-10 rounded-full blur-lg group-hover:opacity-20 transition-opacity`} />
               </CardContent>
             </Card>
           );
@@ -94,7 +94,7 @@ const StatsSection = () => {
       <Card className="overflow-hidden border-0 bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50 shadow-xl">
         <CardContent className="p-8">
           <div className="flex items-center gap-3 mb-6">
-            <div className="w-10 h-10 bg-gradient-to-r from-purple-500 to-blue-500 rounded-xl flex items-center justify-center">
+            <div className="w-10 h-10 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-xl flex items-center justify-center">
               <Star className="w-5 h-5 text-white" />
             </div>
             <h3 className="text-2xl font-bold text-slate-900 dark:text-white">Achievements</h3>
@@ -110,7 +110,7 @@ const StatsSection = () => {
                 <p className="text-sm text-slate-600 dark:text-slate-400">{achievement.description}</p>
                 <div className="w-full bg-slate-200 dark:bg-slate-700 rounded-full h-2">
                   <div 
-                    className="bg-gradient-to-r from-purple-500 to-blue-500 h-2 rounded-full transition-all duration-1000"
+                    className="bg-gradient-to-r from-emerald-500 to-teal-500 h-2 rounded-full transition-all duration-1000"
                     style={{ width: `${achievement.progress}%` }}
                   />
                 </div>

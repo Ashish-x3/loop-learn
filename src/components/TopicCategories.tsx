@@ -9,57 +9,57 @@ const TopicCategories = () => {
       name: "Programming", 
       icon: Code, 
       count: 128, 
-      color: "from-blue-500 to-cyan-500",
-      bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50"
+      color: "from-slate-600 to-slate-700",
+      bgColor: "from-slate-50 to-slate-100 dark:from-slate-900/50 dark:to-slate-800/50"
     },
     { 
       name: "Design", 
       icon: Palette, 
       count: 87, 
-      color: "from-purple-500 to-pink-500",
-      bgColor: "from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50"
+      color: "from-rose-500 to-pink-500",
+      bgColor: "from-rose-50 to-pink-50 dark:from-rose-950/50 dark:to-pink-950/50"
     },
     { 
       name: "Science", 
       icon: Calculator, 
       count: 156, 
-      color: "from-green-500 to-emerald-500",
-      bgColor: "from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50"
+      color: "from-emerald-500 to-teal-500",
+      bgColor: "from-emerald-50 to-teal-50 dark:from-emerald-950/50 dark:to-teal-950/50"
     },
     { 
       name: "Languages", 
       icon: Globe, 
       count: 92, 
-      color: "from-orange-500 to-red-500",
-      bgColor: "from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50"
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50"
     },
     { 
       name: "Literature", 
       icon: BookOpen, 
       count: 73, 
-      color: "from-indigo-500 to-purple-500",
-      bgColor: "from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50"
+      color: "from-indigo-500 to-violet-500",
+      bgColor: "from-indigo-50 to-violet-50 dark:from-indigo-950/50 dark:to-violet-950/50"
     },
     { 
       name: "Psychology", 
       icon: Brain, 
       count: 64, 
-      color: "from-rose-500 to-pink-500",
-      bgColor: "from-rose-50 to-pink-50 dark:from-rose-950/50 dark:to-pink-950/50"
+      color: "from-amber-500 to-orange-500",
+      bgColor: "from-amber-50 to-orange-50 dark:from-amber-950/50 dark:to-orange-950/50"
     },
     { 
       name: "Philosophy", 
       icon: Lightbulb, 
       count: 45, 
-      color: "from-amber-500 to-yellow-500",
-      bgColor: "from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50"
+      color: "from-yellow-500 to-amber-500",
+      bgColor: "from-yellow-50 to-amber-50 dark:from-yellow-950/50 dark:to-amber-950/50"
     },
     { 
       name: "Health", 
       icon: Heart, 
       count: 38, 
-      color: "from-teal-500 to-green-500",
-      bgColor: "from-teal-50 to-green-50 dark:from-teal-950/50 dark:to-green-950/50"
+      color: "from-teal-500 to-emerald-500",
+      bgColor: "from-teal-50 to-emerald-50 dark:from-teal-950/50 dark:to-emerald-950/50"
     }
   ];
 
@@ -107,7 +107,7 @@ const TopicCategories = () => {
                 </CardContent>
 
                 {/* Decorative elements */}
-                <div className={`absolute top-2 right-2 w-12 h-12 bg-gradient-to-br ${category.color} opacity-10 rounded-full blur-xl group-hover:opacity-20 transition-opacity`} />
+                <div className={`absolute top-2 right-2 w-12 h-12 bg-gradient-to-br ${category.color} opacity-10 rounded-full blur-lg group-hover:opacity-20 transition-opacity`} />
               </Card>
             </Link>
           );
