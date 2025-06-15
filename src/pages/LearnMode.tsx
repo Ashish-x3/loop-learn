@@ -14,7 +14,7 @@ const LearnMode = () => {
   const { topic } = useParams();
   const navigate = useNavigate();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [completedCards, setCompletedCards] = useState<string[]>([]);
+  const [completedCards, setCompletedCards] = useState<number[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
