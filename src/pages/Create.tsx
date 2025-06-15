@@ -8,13 +8,14 @@ import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
 import FloatingDock from '@/components/FloatingDock';
+import ThemeToggle from '@/components/ThemeToggle';
 
 const Create = () => {
   const [topic, setTopic] = useState('');
 
   const quickTopics = [
     "JavaScript Promise",
-    "React useState",
+    "React useState", 
     "CSS Flexbox",
     "Git Merge",
     "HTML Semantic Tags",
@@ -31,26 +32,28 @@ const Create = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-white dark:bg-black">
+    <div className="min-h-screen bg-background">
+      <ThemeToggle />
+      
       {/* Header */}
-      <div className="border-b border-white/20 dark:border-white/10 backdrop-blur-xl bg-white/10 dark:bg-black/20 sticky top-0 z-40">
+      <div className="border-b border-border backdrop-blur-xl bg-background/80 sticky top-0 z-40">
         <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
           <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
             <div className="flex items-center space-x-3 sm:space-x-4">
               <Link to="/dashboard">
-                <Button variant="ghost" size="sm" className="text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20 p-2 sm:px-3">
+                <Button variant="ghost" size="sm" className="hover:bg-muted p-2 sm:px-3">
                   <ArrowLeft className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Back</span>
                 </Button>
               </Link>
               <div>
-                <h1 className="text-xl sm:text-2xl font-bold text-black dark:text-white">Create Flashcard</h1>
-                <p className="text-xs sm:text-sm text-black/70 dark:text-white/70 mt-1">
+                <h1 className="text-xl sm:text-2xl font-bold">Create Flashcard</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground mt-1">
                   Generate AI-powered flashcards or create your own
                 </p>
               </div>
             </div>
-            <Button className="w-full sm:w-auto bg-blue-500/80 hover:bg-blue-600/80 text-white border-0 backdrop-blur-sm">
+            <Button className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground border-0 backdrop-blur-sm">
               <Plus className="w-4 h-4 mr-2" />
               Quick Create
             </Button>
@@ -63,20 +66,20 @@ const Create = () => {
         <section className="space-y-4 sm:space-y-6 mb-8 sm:mb-12">
           <div className="text-center space-y-3 sm:space-y-4">
             <div className="flex justify-center">
-              <div className="p-3 sm:p-4 bg-blue-500/10 rounded-2xl backdrop-blur-sm">
-                <Lightbulb className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500" />
+              <div className="p-3 sm:p-4 bg-primary/10 rounded-2xl backdrop-blur-sm">
+                <Lightbulb className="w-6 h-6 sm:w-8 sm:h-8 text-primary" />
               </div>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white">AI Flashcard Generator</h2>
-            <p className="text-sm sm:text-base text-black/70 dark:text-white/70 max-w-md mx-auto px-4">
+            <h2 className="text-xl sm:text-2xl font-bold">AI Flashcard Generator</h2>
+            <p className="text-sm sm:text-base text-muted-foreground max-w-md mx-auto px-4">
               Enter any tech topic and let AI create kid-friendly explanations with examples
             </p>
           </div>
 
-          <Card className="max-w-2xl mx-auto border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+          <Card className="max-w-2xl mx-auto border-0 backdrop-blur-xl bg-card/50 border border-border">
             <CardHeader className="p-4 sm:p-6">
-              <CardTitle className="text-base sm:text-lg text-black dark:text-white">What do you want to learn?</CardTitle>
-              <CardDescription className="text-sm text-black/70 dark:text-white/70">
+              <CardTitle className="text-base sm:text-lg">What do you want to learn?</CardTitle>
+              <CardDescription className="text-sm">
                 Type a programming concept, framework, or technology
               </CardDescription>
             </CardHeader>
@@ -86,9 +89,9 @@ const Create = () => {
                   placeholder="e.g., JavaScript Closures, React Hooks, CSS Grid..."
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
-                  className="flex-1 bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10 text-black dark:text-white placeholder:text-black/50 dark:placeholder:text-white/50"
+                  className="flex-1"
                 />
-                <Button disabled={!topic.trim()} className="w-full sm:w-auto bg-blue-500/80 hover:bg-blue-600/80 text-white border-0 backdrop-blur-sm">
+                <Button disabled={!topic.trim()} className="w-full sm:w-auto bg-primary hover:bg-primary/90 text-primary-foreground border-0 backdrop-blur-sm">
                   <Plus className="w-4 h-4 mr-2" />
                   Generate
                 </Button>
@@ -96,7 +99,7 @@ const Create = () => {
 
               {/* Quick Topics */}
               <div className="space-y-3">
-                <p className="text-sm font-medium text-black dark:text-white">Quick suggestions:</p>
+                <p className="text-sm font-medium">Quick suggestions:</p>
                 <div className="flex flex-wrap gap-2">
                   {quickTopics.map((quickTopic, index) => (
                     <Button
@@ -104,7 +107,7 @@ const Create = () => {
                       variant="outline"
                       size="sm"
                       onClick={() => setTopic(quickTopic)}
-                      className="text-xs bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10 text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20"
+                      className="text-xs"
                     >
                       {quickTopic}
                     </Button>
@@ -115,29 +118,29 @@ const Create = () => {
           </Card>
         </section>
 
-        <Separator className="my-8 sm:my-12 bg-white/20 dark:bg-white/10" />
+        <Separator className="my-8 sm:my-12" />
 
         {/* Browse by Category */}
         <section className="space-y-4 sm:space-y-6 mb-8 sm:mb-12">
           <div className="text-center space-y-3 sm:space-y-4">
-            <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white">Browse by Category</h2>
-            <p className="text-sm sm:text-base text-black/70 dark:text-white/70 px-4">
+            <h2 className="text-xl sm:text-2xl font-bold">Browse by Category</h2>
+            <p className="text-sm sm:text-base text-muted-foreground px-4">
               Explore existing flashcards or add to specific topics
             </p>
           </div>
 
           <div className="grid grid-cols-2 md:grid-cols-3 gap-3 sm:gap-4">
             {categories.map((category, index) => (
-              <Card key={index} className="hover:shadow-lg transition-all cursor-pointer group border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:-translate-y-1">
+              <Card key={index} className="hover:shadow-lg transition-all cursor-pointer group border-0 backdrop-blur-xl bg-card/50 border border-border hover:-translate-y-1">
                 <CardContent className="p-4 sm:p-6 text-center space-y-2 sm:space-y-3">
                   <div className="text-2xl sm:text-3xl group-hover:scale-110 transition-transform">
                     {category.icon}
                   </div>
                   <div className="space-y-1 sm:space-y-2">
-                    <h3 className="text-sm sm:text-base font-semibold group-hover:text-blue-500 transition-colors text-black dark:text-white">
+                    <h3 className="text-sm sm:text-base font-semibold group-hover:text-primary transition-colors">
                       {category.name}
                     </h3>
-                    <Badge variant="secondary" className="text-xs bg-white/20 dark:bg-black/20 text-black dark:text-white border-white/20 dark:border-white/10">
+                    <Badge variant="secondary" className="text-xs">
                       {category.count} cards
                     </Badge>
                   </div>
@@ -147,35 +150,35 @@ const Create = () => {
           </div>
         </section>
 
-        <Separator className="my-8 sm:my-12 bg-white/20 dark:bg-white/10" />
+        <Separator className="my-8 sm:my-12" />
 
         {/* Manual Creation */}
         <section className="space-y-4 sm:space-y-6">
           <div className="text-center space-y-3 sm:space-y-4">
             <div className="flex justify-center">
-              <div className="p-3 sm:p-4 bg-white/10 dark:bg-black/10 rounded-2xl backdrop-blur-sm">
-                <Code className="w-6 h-6 sm:w-8 sm:h-8 text-black dark:text-white" />
+              <div className="p-3 sm:p-4 bg-muted rounded-2xl backdrop-blur-sm">
+                <Code className="w-6 h-6 sm:w-8 sm:h-8 text-foreground" />
               </div>
             </div>
-            <h2 className="text-xl sm:text-2xl font-bold text-black dark:text-white">Create Manually</h2>
-            <p className="text-sm sm:text-base text-black/70 dark:text-white/70 px-4">
+            <h2 className="text-xl sm:text-2xl font-bold">Create Manually</h2>
+            <p className="text-sm sm:text-base text-muted-foreground px-4">
               Prefer to write your own? Create custom flashcards from scratch
             </p>
           </div>
 
           <div className="max-w-2xl mx-auto grid gap-4">
             <Link to="/create/manual">
-              <Card className="hover:shadow-lg transition-all cursor-pointer group border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:-translate-y-1">
+              <Card className="hover:shadow-lg transition-all cursor-pointer group border-0 backdrop-blur-xl bg-card/50 border border-border hover:-translate-y-1">
                 <CardContent className="p-4 sm:p-6">
                   <div className="flex items-center space-x-3 sm:space-x-4">
-                    <div className="p-2 sm:p-3 bg-blue-500/10 rounded-lg group-hover:bg-blue-500/20 transition-colors backdrop-blur-sm">
-                      <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-blue-500" />
+                    <div className="p-2 sm:p-3 bg-primary/10 rounded-lg group-hover:bg-primary/20 transition-colors backdrop-blur-sm">
+                      <BookOpen className="w-5 h-5 sm:w-6 sm:h-6 text-primary" />
                     </div>
                     <div>
-                      <h3 className="text-sm sm:text-base font-semibold group-hover:text-blue-500 transition-colors text-black dark:text-white">
+                      <h3 className="text-sm sm:text-base font-semibold group-hover:text-primary transition-colors">
                         Custom Flashcard
                       </h3>
-                      <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">
+                      <p className="text-xs sm:text-sm text-muted-foreground">
                         Create your own definition, analogy, and examples
                       </p>
                     </div>
