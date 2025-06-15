@@ -30,6 +30,24 @@ const accentColorMap: Record<AccentColor, { hex: string; hsl: string }> = {
   red: { hex: '#ef4444', hsl: '0 84% 60%' }
 };
 
+const applyAccentColor = (accentColor: AccentColor, isDark: boolean) => {
+  const colorConfig = accentColorMap[accentColor];
+  console.log('Applying accent color globally:', accentColor, colorConfig);
+  
+  const root = document.documentElement;
+  root.style.setProperty('--accent-color', colorConfig.hex);
+  root.style.setProperty('--primary', colorConfig.hsl);
+  root.style.setProperty('--primary-foreground', isDark ? '222.2 84% 4.9%' : '210 40% 98%');
+  root.style.setProperty('--ring', colorConfig.hsl);
+  
+  // Also apply to sidebar colors for consistency
+  root.style.setProperty('--sidebar-primary', colorConfig.hsl);
+  root.style.setProperty('--sidebar-ring', colorConfig.hsl);
+  
+  // Force re-render by triggering a layout change
+  root.style.setProperty('--accent-applied', Date.now().toString());
+};
+
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const [isDark, setIsDark] = useState(() => {
     if (typeof window !== 'undefined') {
@@ -48,27 +66,25 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     return 'blue';
   });
 
+  // Apply theme on mount and theme changes
   useEffect(() => {
     document.documentElement.classList.toggle('dark', isDark);
     localStorage.setItem('theme', isDark ? 'dark' : 'light');
-  }, [isDark]);
+    
+    // Reapply accent color when theme changes
+    applyAccentColor(accentColor, isDark);
+  }, [isDark, accentColor]);
 
+  // Apply accent color when it changes
   useEffect(() => {
-    const colorConfig = accentColorMap[accentColor];
-    console.log('Applying accent color:', accentColor, colorConfig);
-    
-    // Apply accent color to all relevant CSS custom properties
-    const root = document.documentElement;
-    root.style.setProperty('--accent-color', colorConfig.hex);
-    root.style.setProperty('--primary', colorConfig.hsl);
-    root.style.setProperty('--primary-foreground', isDark ? '222.2 84% 4.9%' : '210 40% 98%');
-    root.style.setProperty('--ring', colorConfig.hsl);
-    
-    // Force re-render by triggering a small layout change
-    root.style.setProperty('--accent-applied', Date.now().toString());
-    
+    applyAccentColor(accentColor, isDark);
     localStorage.setItem('accent-color', accentColor);
   }, [accentColor, isDark]);
+
+  // Apply colors immediately on mount
+  useEffect(() => {
+    applyAccentColor(accentColor, isDark);
+  }, []);
 
   const setAccentColor = (color: AccentColor) => {
     console.log('ThemeContext: setAccentColor called with:', color);

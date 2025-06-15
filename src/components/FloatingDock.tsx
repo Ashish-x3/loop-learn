@@ -80,19 +80,19 @@ const FloatingDock = () => {
                     <div className={cn(
                       "absolute inset-0 rounded-xl transition-all duration-300 backdrop-blur-sm",
                       active ? 
-                        "bg-blue-500/90 shadow-lg shadow-blue-500/30 border border-blue-400/50" :
+                        "bg-primary shadow-lg shadow-primary/30 border border-primary/50" :
                         "bg-white/30 dark:bg-black/30 hover:bg-white/40 dark:hover:bg-black/40 border border-white/30 dark:border-white/20 shadow-md"
                     )} />
                     
                     <Icon className={cn(
                       "relative z-10 transition-colors duration-300",
                       "w-5 h-5 sm:w-4 sm:h-4",
-                      active ? "text-white" : "text-black dark:text-white"
+                      active ? "text-primary-foreground" : "text-black dark:text-white"
                     )} />
                     
                     {/* Active indicator */}
                     {active && (
-                      <div className="absolute -bottom-0.5 w-1.5 h-1.5 sm:w-1 sm:h-1 bg-white rounded-full shadow-lg" />
+                      <div className="absolute -bottom-0.5 w-1.5 h-1.5 sm:w-1 sm:h-1 bg-primary-foreground rounded-full shadow-lg" />
                     )}
                   </Button>
                 </Link>
