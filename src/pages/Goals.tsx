@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { Target, Plus, Calendar, Clock, CheckCircle, Circle, ArrowLeft } from 'lucide-react';
+import { Target, Plus, Calendar, TrendingUp, CheckCircle, ArrowLeft, Clock, BarChart3 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -11,56 +11,38 @@ const Goals = () => {
   const [goals] = useState([
     {
       id: 1,
-      title: "Master JavaScript Fundamentals",
-      description: "Complete 100 JavaScript flashcards",
-      progress: 67,
-      target: 100,
+      title: "Master React Hooks",
+      description: "Complete 30 React hook-related flashcards",
+      progress: 18,
+      target: 30,
+      category: "React",
       deadline: "2024-02-15",
-      category: "JavaScript",
-      completed: false
+      status: "active"
     },
     {
       id: 2,
-      title: "30-Day Learning Streak",
-      description: "Study consistently for 30 days",
-      progress: 7,
-      target: 30,
-      deadline: "2024-02-01",
-      category: "Habit",
-      completed: false
+      title: "JavaScript Fundamentals",
+      description: "Learn core JavaScript concepts",
+      progress: 45,
+      target: 50,
+      category: "JavaScript",
+      deadline: "2024-02-10",
+      status: "active"
     },
     {
       id: 3,
-      title: "React Components Mastery",
-      description: "Learn 50 React concepts",
-      progress: 50,
-      target: 50,
-      deadline: "2024-01-30",
-      category: "React",
-      completed: true
-    },
-    {
-      id: 4,
-      title: "CSS Grid & Flexbox",
-      description: "Master modern CSS layouts",
-      progress: 23,
-      target: 40,
-      deadline: "2024-02-20",
+      title: "CSS Grid Mastery",
+      description: "Complete CSS Grid layout challenges",
+      progress: 12,
+      target: 12,
       category: "CSS",
-      completed: false
+      deadline: "2024-01-30",
+      status: "completed"
     }
-  ];
+  ]);
 
-  const activeGoals = goals.filter(goal => !goal.completed);
-  const completedGoals = goals.filter(goal => goal.completed);
-
-  const getDaysRemaining = (deadline: string) => {
-    const today = new Date();
-    const deadlineDate = new Date(deadline);
-    const diffTime = deadlineDate.getTime() - today.getTime();
-    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-    return diffDays;
-  };
+  const activeGoals = goals.filter(goal => goal.status === 'active');
+  const completedGoals = goals.filter(goal => goal.status === 'completed');
 
   return (
     <div className="min-h-screen bg-background">
@@ -91,7 +73,7 @@ const Goals = () => {
       </div>
 
       <div className="container mx-auto px-4 py-8 pb-32">
-        {/* Quick Stats */}
+        {/* Stats Overview */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
           <Card>
             <CardContent className="p-6 text-center">
@@ -109,96 +91,74 @@ const Goals = () => {
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <Calendar className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold">
-                {activeGoals.filter(goal => getDaysRemaining(goal.deadline) <= 7).length}
-              </div>
-              <p className="text-sm text-muted-foreground">Due This Week</p>
+              <Clock className="w-8 h-8 text-orange-600 mx-auto mb-2" />
+              <div className="text-2xl font-bold">7</div>
+              <p className="text-sm text-muted-foreground">Days Avg</p>
             </CardContent>
           </Card>
           <Card>
             <CardContent className="p-6 text-center">
-              <Clock className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold">
-                {Math.round(goals.reduce((sum, goal) => sum + (goal.progress / goal.target * 100), 0) / goals.length)}%
-              </div>
-              <p className="text-sm text-muted-foreground">Avg Progress</p>
+              <BarChart3 className="w-8 h-8 text-purple-600 mx-auto mb-2" />
+              <div className="text-2xl font-bold">85%</div>
+              <p className="text-sm text-muted-foreground">Success Rate</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Active Goals */}
-        {activeGoals.length > 0 && (
-          <div className="space-y-6 mb-8">
-            <h2 className="text-xl font-semibold flex items-center">
-              <Circle className="w-5 h-5 mr-2 text-blue-600" />
-              Active Goals
-            </h2>
-            <div className="grid gap-4">
-              {activeGoals.map((goal) => {
-                const progressPercentage = Math.round((goal.progress / goal.target) * 100);
-                const daysRemaining = getDaysRemaining(goal.deadline);
-                
-                return (
-                  <Card key={goal.id} className="hover:shadow-md transition-shadow">
-                    <CardHeader>
-                      <div className="flex items-center justify-between">
-                        <div>
-                          <CardTitle className="text-lg">{goal.title}</CardTitle>
-                          <CardDescription>{goal.description}</CardDescription>
-                        </div>
-                        <Badge variant="secondary">{goal.category}</Badge>
+        <div className="space-y-6 mb-8">
+          <h2 className="text-xl font-semibold">Active Goals</h2>
+          <div className="grid gap-4">
+            {activeGoals.map((goal) => (
+              <Card key={goal.id}>
+                <CardHeader>
+                  <div className="flex items-center justify-between">
+                    <div className="space-y-1">
+                      <CardTitle className="text-lg">{goal.title}</CardTitle>
+                      <CardDescription>{goal.description}</CardDescription>
+                    </div>
+                    <Badge variant="secondary">{goal.category}</Badge>
+                  </div>
+                </CardHeader>
+                <CardContent>
+                  <div className="space-y-4">
+                    <div className="flex items-center justify-between text-sm">
+                      <span>Progress</span>
+                      <span>{goal.progress}/{goal.target}</span>
+                    </div>
+                    <div className="w-full bg-secondary rounded-full h-2">
+                      <div 
+                        className="bg-primary h-2 rounded-full transition-all" 
+                        style={{ width: `${(goal.progress / goal.target) * 100}%` }}
+                      />
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        Due {new Date(goal.deadline).toLocaleDateString()}
                       </div>
-                    </CardHeader>
-                    <CardContent className="space-y-4">
-                      {/* Progress Bar */}
-                      <div className="space-y-2">
-                        <div className="flex justify-between text-sm">
-                          <span>Progress: {goal.progress}/{goal.target}</span>
-                          <span className="font-medium">{progressPercentage}%</span>
-                        </div>
-                        <div className="w-full bg-secondary rounded-full h-2">
-                          <div 
-                            className="bg-primary h-2 rounded-full transition-all duration-300"
-                            style={{ width: `${progressPercentage}%` }}
-                          />
-                        </div>
-                      </div>
-                      
-                      {/* Deadline */}
-                      <div className="flex items-center justify-between">
-                        <div className="flex items-center text-sm text-muted-foreground">
-                          <Calendar className="w-4 h-4 mr-1" />
-                          Due: {new Date(goal.deadline).toLocaleDateString()}
-                        </div>
-                        <Badge variant={daysRemaining <= 7 ? "destructive" : "outline"}>
-                          {daysRemaining > 0 ? `${daysRemaining} days left` : 'Overdue'}
-                        </Badge>
-                      </div>
-                    </CardContent>
-                  </Card>
-                );
-              })}
-            </div>
+                      <Button size="sm">Continue</Button>
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
           </div>
-        )}
+        </div>
 
         {/* Completed Goals */}
         {completedGoals.length > 0 && (
           <div className="space-y-6">
-            <h2 className="text-xl font-semibold flex items-center">
-              <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
-              Completed Goals
-            </h2>
+            <h2 className="text-xl font-semibold">Completed Goals</h2>
             <div className="grid gap-4">
               {completedGoals.map((goal) => (
-                <Card key={goal.id} className="border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800">
+                <Card key={goal.id} className="opacity-75">
                   <CardHeader>
                     <div className="flex items-center justify-between">
-                      <div>
+                      <div className="space-y-1">
                         <CardTitle className="text-lg flex items-center">
-                          <CheckCircle className="w-5 h-5 mr-2 text-green-600" />
                           {goal.title}
+                          <CheckCircle className="w-5 h-5 text-green-600 ml-2" />
                         </CardTitle>
                         <CardDescription>{goal.description}</CardDescription>
                       </div>
@@ -207,10 +167,11 @@ const Goals = () => {
                   </CardHeader>
                   <CardContent>
                     <div className="flex items-center justify-between">
-                      <div className="text-sm text-muted-foreground">
-                        Completed: {goal.progress}/{goal.target}
+                      <div className="flex items-center text-sm text-muted-foreground">
+                        <Calendar className="w-4 h-4 mr-1" />
+                        Completed {new Date(goal.deadline).toLocaleDateString()}
                       </div>
-                      <Badge className="bg-green-600">100% Complete</Badge>
+                      <Badge variant="outline" className="text-green-600">Completed</Badge>
                     </div>
                   </CardContent>
                 </Card>
