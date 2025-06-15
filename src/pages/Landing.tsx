@@ -46,15 +46,15 @@ const Landing = () => {
   ];
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white dark:bg-black">
       <ThemeToggle />
       
       {/* Hero Section */}
-      <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-950 dark:via-slate-900 dark:to-slate-800">
+      <div className="relative min-h-screen flex flex-col items-center justify-center overflow-hidden bg-white dark:bg-black">
         {/* Floating orbs background */}
         <div className="absolute inset-0 overflow-hidden">
-          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-gradient-to-r from-emerald-200/20 to-teal-200/20 dark:from-emerald-500/10 dark:to-teal-500/10 rounded-full blur-2xl animate-pulse" />
-          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-gradient-to-r from-blue-200/15 to-cyan-200/15 dark:from-blue-500/8 dark:to-cyan-500/8 rounded-full blur-2xl animate-pulse delay-1000" />
+          <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-blue-500/10 rounded-full blur-2xl animate-pulse" />
+          <div className="absolute bottom-1/4 right-1/4 w-80 h-80 bg-blue-500/5 rounded-full blur-2xl animate-pulse delay-1000" />
         </div>
 
         {/* Main content */}
@@ -62,11 +62,11 @@ const Landing = () => {
           {/* Logo/Icon */}
           <div className="flex justify-center mb-8">
             <div className="relative">
-              <div className="w-20 h-20 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-3xl flex items-center justify-center shadow-2xl shadow-emerald-500/20 rotate-3 hover:rotate-0 transition-transform duration-700">
+              <div className="w-20 h-20 bg-blue-500/80 rounded-3xl flex items-center justify-center shadow-2xl shadow-blue-500/20 rotate-3 hover:rotate-0 transition-transform duration-700 backdrop-blur-sm">
                 <Brain className="w-10 h-10 text-white" />
               </div>
-              <div className="absolute -top-2 -right-2 w-6 h-6 bg-amber-400 rounded-full flex items-center justify-center">
-                <Sparkles className="w-3 h-3 text-amber-800" />
+              <div className="absolute -top-2 -right-2 w-6 h-6 bg-white/90 dark:bg-black/90 border border-black/10 dark:border-white/10 rounded-full flex items-center justify-center backdrop-blur-sm">
+                <Sparkles className="w-3 h-3 text-black dark:text-white" />
               </div>
             </div>
           </div>
@@ -74,11 +74,11 @@ const Landing = () => {
           {/* Dynamic headline */}
           <div className="space-y-4">
             <h1 className="text-7xl md:text-8xl font-black tracking-tight">
-              <span className="bg-gradient-to-r from-slate-900 via-slate-700 to-slate-900 dark:from-white dark:via-slate-200 dark:to-white bg-clip-text text-transparent">
+              <span className="text-black dark:text-white">
                 {phrases[currentPhrase]}
               </span>
             </h1>
-            <p className="text-xl md:text-2xl text-slate-600 dark:text-slate-300 font-light max-w-2xl mx-auto leading-relaxed">
+            <p className="text-xl md:text-2xl text-black/70 dark:text-white/70 font-light max-w-2xl mx-auto leading-relaxed">
               The most beautiful way to learn anything. 
               <span className="block mt-2 text-lg opacity-75">Transform how you study with intelligent flashcards.</span>
             </p>
@@ -87,7 +87,7 @@ const Landing = () => {
           {/* CTA Buttons */}
           <div className="flex flex-col sm:flex-row gap-4 justify-center items-center pt-8">
             <Link to="/dashboard">
-              <Button className="group relative overflow-hidden bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-2xl shadow-emerald-500/20 hover:shadow-emerald-500/30 transition-all duration-300 hover:-translate-y-1">
+              <Button className="group relative overflow-hidden bg-blue-500/80 hover:bg-blue-600/80 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-2xl shadow-blue-500/20 hover:shadow-blue-500/30 transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm border-0">
                 <span className="relative z-10 flex items-center gap-3">
                   <Play className="w-5 h-5" />
                   Get Started Free
@@ -97,7 +97,7 @@ const Landing = () => {
               </Button>
             </Link>
             
-            <Button variant="outline" className="px-8 py-6 text-lg font-medium rounded-2xl border-2 hover:bg-slate-50 dark:hover:bg-slate-800 transition-all duration-300 hover:-translate-y-1">
+            <Button className="px-8 py-6 text-lg font-medium rounded-2xl border border-black/20 dark:border-white/20 bg-white/10 dark:bg-black/10 hover:bg-white/20 dark:hover:bg-black/20 text-black dark:text-white transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm">
               Watch Demo
             </Button>
           </div>
@@ -105,18 +105,18 @@ const Landing = () => {
 
         {/* Scroll indicator */}
         <div className="absolute bottom-8 left-1/2 transform -translate-x-1/2 animate-bounce">
-          <div className="w-1 h-12 bg-gradient-to-b from-slate-400 to-transparent rounded-full" />
+          <div className="w-1 h-12 bg-gradient-to-b from-black/40 dark:from-white/40 to-transparent rounded-full" />
         </div>
       </div>
 
       {/* Features Section */}
-      <div className="py-24 bg-white dark:bg-slate-900">
+      <div className="py-24 bg-white dark:bg-black">
         <div className="container mx-auto px-6">
           <div className="text-center space-y-4 mb-16">
-            <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
+            <h2 className="text-4xl font-bold text-black dark:text-white">
               Why Choose Our Platform?
             </h2>
-            <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+            <p className="text-lg text-black/70 dark:text-white/70 max-w-2xl mx-auto">
               Join thousands of learners who've transformed their study habits
             </p>
           </div>
@@ -125,15 +125,15 @@ const Landing = () => {
             {features.map((feature, index) => {
               const Icon = feature.icon;
               return (
-                <Card key={index} className="group border-0 bg-slate-50 dark:bg-slate-800/50 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
+                <Card key={index} className="group border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:shadow-xl transition-all duration-300 hover:-translate-y-2">
                   <CardContent className="p-8 text-center space-y-4">
-                    <div className="w-16 h-16 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300">
+                    <div className="w-16 h-16 bg-blue-500/80 rounded-2xl flex items-center justify-center mx-auto shadow-lg group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
                       <Icon className="w-8 h-8 text-white" />
                     </div>
-                    <h3 className="text-xl font-bold text-slate-900 dark:text-white">
+                    <h3 className="text-xl font-bold text-black dark:text-white">
                       {feature.title}
                     </h3>
-                    <p className="text-slate-600 dark:text-slate-400">
+                    <p className="text-black/70 dark:text-white/70">
                       {feature.description}
                     </p>
                   </CardContent>
@@ -145,16 +145,16 @@ const Landing = () => {
       </div>
 
       {/* CTA Section */}
-      <div className="py-24 bg-gradient-to-r from-emerald-50 to-teal-50 dark:from-emerald-950/20 dark:to-teal-950/20">
+      <div className="py-24 bg-white/50 dark:bg-black/50 backdrop-blur-xl">
         <div className="container mx-auto px-6 text-center space-y-8">
-          <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
+          <h2 className="text-4xl font-bold text-black dark:text-white">
             Ready to Transform Your Learning?
           </h2>
-          <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          <p className="text-lg text-black/70 dark:text-white/70 max-w-2xl mx-auto">
             Join thousands of students, professionals, and lifelong learners who are mastering new skills every day.
           </p>
           <Link to="/dashboard">
-            <Button className="bg-gradient-to-r from-emerald-600 to-teal-600 hover:from-emerald-700 hover:to-teal-700 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1">
+            <Button className="bg-blue-500/80 hover:bg-blue-600/80 text-white px-8 py-6 text-lg font-semibold rounded-2xl shadow-xl hover:shadow-2xl transition-all duration-300 hover:-translate-y-1 backdrop-blur-sm border-0">
               Start Learning Today
             </Button>
           </Link>

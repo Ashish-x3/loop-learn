@@ -7,16 +7,16 @@ import FloatingDock from '@/components/FloatingDock';
 
 const Dashboard = () => {
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white dark:bg-black">
       <ThemeToggle />
       
       {/* Welcome Header */}
       <div className="container mx-auto px-6 pt-12 pb-8">
         <div className="text-center space-y-4">
-          <h1 className="text-4xl font-bold text-slate-900 dark:text-white">
+          <h1 className="text-4xl font-bold text-black dark:text-white">
             Welcome back! 👋
           </h1>
-          <p className="text-lg text-slate-600 dark:text-slate-400">
+          <p className="text-lg text-black/70 dark:text-white/70">
             Ready to continue your learning journey?
           </p>
         </div>

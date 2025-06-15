@@ -12,26 +12,26 @@ const DailyChallenge = () => {
   const progress = 65;
 
   return (
-    <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-200">
+    <Card className="border-0 shadow-lg backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:shadow-xl transition-all duration-300">
       <CardHeader className="pb-3">
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-3">
-            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+            <div className="w-10 h-10 bg-blue-500/80 rounded-xl flex items-center justify-center backdrop-blur-sm">
               <Target className="w-5 h-5 text-white" />
             </div>
             <div>
-              <CardTitle className="text-lg">Daily Challenge</CardTitle>
-              <p className="text-sm text-muted-foreground">Complete 10 cards today</p>
+              <CardTitle className="text-lg text-black dark:text-white">Daily Challenge</CardTitle>
+              <p className="text-sm text-black/70 dark:text-white/70">Complete 10 cards today</p>
             </div>
           </div>
           
           {completed ? (
-            <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">
+            <Badge className="bg-white/20 dark:bg-black/20 text-black dark:text-white border border-white/20 dark:border-white/10 hover:bg-white/30 dark:hover:bg-black/30">
               <CheckCircle className="w-4 h-4 mr-1" />
               Complete!
             </Badge>
           ) : (
-            <Badge variant="outline" className="gap-1">
+            <Badge variant="outline" className="gap-1 bg-white/10 dark:bg-black/10 text-black dark:text-white border-white/20 dark:border-white/10">
               <Clock className="w-4 h-4" />
               8h left
             </Badge>
@@ -43,15 +43,15 @@ const DailyChallenge = () => {
         {/* Progress */}
         <div className="space-y-2">
           <div className="flex items-center justify-between text-sm">
-            <span className="font-medium">Progress</span>
-            <span className="text-muted-foreground">6 / 10 cards</span>
+            <span className="font-medium text-black dark:text-white">Progress</span>
+            <span className="text-black/70 dark:text-white/70">6 / 10 cards</span>
           </div>
           <Progress value={progress} className="h-2" />
         </div>
 
         {/* Reward and Action */}
         <div className="flex items-center justify-between pt-2">
-          <Badge variant="secondary" className="bg-amber-100 text-amber-700 hover:bg-amber-100">
+          <Badge className="bg-white/20 dark:bg-black/20 text-black dark:text-white border border-white/20 dark:border-white/10 hover:bg-white/30 dark:hover:bg-black/30">
             <Star className="w-4 h-4 mr-1" />
             +50 XP
           </Badge>
@@ -59,7 +59,7 @@ const DailyChallenge = () => {
           <Link to="/learn">
             <Button 
               size="sm"
-              className="gap-2"
+              className="gap-2 bg-blue-500/80 hover:bg-blue-600/80 text-white border-0 backdrop-blur-sm"
               onClick={() => !completed && setCompleted(true)}
             >
               Continue
