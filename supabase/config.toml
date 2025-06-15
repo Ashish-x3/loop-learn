@@ -1,1 +1,5 @@
+
 project_id = "ftpmfnigubshfarshebm"
+
+[functions.generate-gemini-flashcards]
+verify_jwt = false
