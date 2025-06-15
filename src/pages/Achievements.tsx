@@ -45,11 +45,9 @@ const Achievements = () => {
     }
   ];
 
-  const stats = [
+  const bottomStats = [
     { label: "Cards Learned", value: "127", icon: Brain, color: "text-primary" },
-    { label: "Current Streak", value: "7 days", icon: Calendar, color: "text-primary" },
-    { label: "Achievements", value: "3", icon: Trophy, color: "text-primary" },
-    { label: "Goals Completed", value: "1", icon: Target, color: "text-primary" }
+    { label: "Achievements", value: "3", icon: Trophy, color: "text-primary" }
   ];
 
   return (
@@ -79,9 +77,27 @@ const Achievements = () => {
       </header>
 
       <main className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 lg:py-8 pb-24 sm:pb-32">
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
-          {stats.map((stat, index) => {
+        {/* Current Streak - Top Section */}
+        <div className="mb-6 sm:mb-8">
+          <Card className="border-0 backdrop-blur-xl bg-card/50 border border-border">
+            <CardContent className="p-4 sm:p-6 lg:p-8 text-center space-y-4">
+              <div className="flex justify-center">
+                <div className="p-3 bg-primary/10 rounded-lg">
+                  <Calendar className="w-8 h-8 text-primary" />
+                </div>
+              </div>
+              <div className="space-y-2">
+                <div className="text-4xl font-bold text-primary">7 days</div>
+                <p className="text-lg text-muted-foreground">Current Streak</p>
+                <p className="text-sm text-muted-foreground">Keep it up! You're on fire! 🔥</p>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Bottom Stats */}
+        <div className="grid grid-cols-2 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          {bottomStats.map((stat, index) => {
             const Icon = stat.icon;
             return (
               <Card key={index} className="border-0 backdrop-blur-xl bg-card/50 border border-border">
