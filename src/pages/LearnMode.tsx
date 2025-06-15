@@ -22,27 +22,34 @@ const LearnMode = () => {
   // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // Filter flashcards by exact topic match - using case-insensitive comparison
+  // Filter flashcards by exact topic match with strict comparison
   const flashcards = topic 
     ? allFlashcards.filter(card => {
         // Decode the URL topic parameter
         const decodedTopic = decodeURIComponent(topic);
         
-        // Convert URL slug back to a normalized format for comparison
-        const normalizedUrlTopic = decodedTopic.replace(/-/g, ' ').toLowerCase().trim();
-        const normalizedCardTopic = card.topic.toLowerCase().trim();
+        // Convert URL slug back to original format: "css-grid" -> "CSS Grid"
+        const urlTopicWords = decodedTopic.split('-');
+        const reconstructedTopic = urlTopicWords.map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
+        ).join(' ');
+        
+        // Also try exact case-insensitive match for edge cases
+        const exactCaseInsensitiveMatch = card.topic.toLowerCase() === decodedTopic.replace(/-/g, ' ').toLowerCase();
+        const reconstructedMatch = card.topic === reconstructedTopic;
         
         console.log('Filtering flashcards:', {
           urlTopic: topic,
           decodedTopic,
-          normalizedUrlTopic,
+          reconstructedTopic,
           cardTopic: card.topic,
-          normalizedCardTopic,
-          exactMatch: normalizedCardTopic === normalizedUrlTopic
+          exactCaseInsensitiveMatch,
+          reconstructedMatch,
+          finalMatch: exactCaseInsensitiveMatch || reconstructedMatch
         });
         
-        // Only include cards that exactly match the normalized topic
-        return normalizedCardTopic === normalizedUrlTopic;
+        // Only include cards that exactly match
+        return exactCaseInsensitiveMatch || reconstructedMatch;
       })
     : allFlashcards;
   

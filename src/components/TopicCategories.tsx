@@ -44,7 +44,7 @@ const TopicCategories = () => {
     return colorMap[category] || 'from-gray-500 to-slate-600';
   };
 
-  // Function to create URL-safe topic slug - matches LearnMode parsing exactly
+  // Function to create URL-safe topic slug - converts "CSS Grid" to "css-grid"
   const createTopicSlug = (topic: string) => {
     // Convert topic to lowercase and replace spaces with hyphens, then URL encode
     const slug = topic.toLowerCase().replace(/\s+/g, '-');
