@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -24,6 +23,42 @@ const Auth = () => {
       navigate('/dashboard');
     }
   }, [user, navigate]);
+
+  // Helper to parse Supabase errors for friendlier feedback:
+  function parseAuthError(error: any, context: 'signup' | 'signin'): string {
+    if (!error) return '';
+    // Supabase sometimes does not propagate nested error messages 
+    if (error.status === 500 && error.message && error.message.match(/duplicate key value.+username_key/)) {
+      return "This username is already in use. Please try a different one.";
+    }
+    // Common cases
+    const msg = (typeof error.message === "string") ? error.message : JSON.stringify(error);
+    if (msg.match(/email.*already registered/i)) {
+      return "This email is already registered. Please sign in instead.";
+    }
+    if (msg.match(/invalid login credentials/i)) {
+      return "Invalid email or password. Please check your credentials and try again.";
+    }
+    if (msg.match(/email.*not confirmed/i)) {
+      return "Your email is not confirmed. (Development: Email confirmation is disabled, you should be able to sign in directly)";
+    }
+    if (msg.match(/username.*already exists|duplicate key value/)) {
+      return "This username is already taken. Please choose another.";
+    }
+    if (context === 'signup' && msg.match(/database error saving new user/i)) {
+      return "Username already exists or there's a problem creating your profile. Please try a different username.";
+    }
+    return msg || "An unknown error occurred.";
+  }
+
+  // Check if username is already in use (optional, runs before registration)
+  const checkUsernameExists = async (username: string): Promise<boolean> => {
+    const res = await fetch(
+      `/api/profiles?username=${encodeURIComponent(username)}`
+    );
+    const data = await res.json();
+    return !!data.exists;
+  };
 
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -55,16 +90,22 @@ const Auth = () => {
       return;
     }
 
+    // Optionally: check if username exists before trying to create the user
+    // If you'd like to add this, implement an endpoint for /api/profiles?username=...
+    // Otherwise skip this and rely on error coming from Supabase
+    // const exists = await checkUsernameExists(username);
+    // if (exists) {
+    //   setError("This username is already in use. Please try a different one.");
+    //   setIsLoading(false);
+    //   return;
+    // }
+
     const { error } = await signUp(email, password, username);
 
     if (error) {
-      if (error.message.includes('already registered')) {
-        setError('This email is already registered. Please try signing in instead.');
-      } else if (error.message.includes('Email not confirmed')) {
-        setSuccess('Please check your email and confirm your account before signing in.');
-      } else {
-        setError(error.message);
-      }
+      setError(parseAuthError(error, 'signup'));
+      setIsLoading(false);
+      return;
     } else {
       setSuccess('Account created successfully! You can now sign in.');
     }
@@ -85,19 +126,15 @@ const Auth = () => {
     const { error } = await signIn(email, password);
 
     if (error) {
-      if (error.message.includes('Invalid login credentials')) {
-        setError('Invalid email or password. Please check your credentials and try again.');
-      } else if (error.message.includes('Email not confirmed')) {
-        setError('Please check your email and confirm your account before signing in.');
-      } else {
-        setError(error.message);
-      }
+      setError(parseAuthError(error, 'signin'));
+      setIsLoading(false);
+      return;
     } else {
       // Success - user will be redirected by the useEffect above
       navigate('/dashboard');
+      setIsLoading(false);
+      return;
     }
-
-    setIsLoading(false);
   };
 
   return (
