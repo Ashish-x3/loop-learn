@@ -23,11 +23,11 @@ const FloatingDock = () => {
 
   return (
     <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50">
-      <div className="relative backdrop-blur-2xl bg-white/80 dark:bg-gray-900/80 border border-gray-200/20 dark:border-gray-700/20 shadow-2xl shadow-black/10 dark:shadow-black/40 rounded-2xl p-2">
+      <div className="relative backdrop-blur-2xl bg-white/80 dark:bg-gray-900/80 border border-gray-200/20 dark:border-gray-700/20 shadow-2xl shadow-black/10 dark:shadow-black/40 rounded-2xl p-3 md:p-4">
         {/* macOS-style dock background */}
         <div className="absolute inset-0 bg-gradient-to-t from-gray-100/50 to-white/50 dark:from-gray-800/50 dark:to-gray-700/50 rounded-2xl" />
         
-        <div className="relative flex items-end gap-1 px-2">
+        <div className="relative flex items-end justify-center gap-2 md:gap-3 px-2">
           {dockItems.map((item, index) => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -37,8 +37,8 @@ const FloatingDock = () => {
             let scale = 1;
             if (hoveredIndex !== null) {
               const distance = Math.abs(index - hoveredIndex);
-              if (distance === 0) scale = 1.5;
-              else if (distance === 1) scale = 1.3;
+              if (distance === 0) scale = 1.4;
+              else if (distance === 1) scale = 1.2;
               else if (distance === 2) scale = 1.1;
             }
 
@@ -48,27 +48,34 @@ const FloatingDock = () => {
                 className="relative group flex flex-col items-center"
                 onMouseEnter={() => setHoveredIndex(index)}
                 onMouseLeave={() => setHoveredIndex(null)}
+                style={{
+                  zIndex: isHovered ? 10 : 1,
+                  minWidth: '48px',
+                  minHeight: '60px'
+                }}
               >
-                {/* Tooltip */}
+                {/* Tooltip - only show on desktop */}
                 <div className={cn(
-                  "absolute bottom-full mb-2 px-2 py-1 bg-gray-900 dark:bg-gray-100 text-white dark:text-gray-900 text-xs rounded-md opacity-0 pointer-events-none transition-all duration-200 whitespace-nowrap",
+                  "absolute bottom-full mb-3 px-3 py-2 bg-gray-900/90 dark:bg-gray-100/90 text-white dark:text-gray-900 text-sm rounded-lg opacity-0 pointer-events-none transition-all duration-200 whitespace-nowrap backdrop-blur-sm shadow-lg hidden md:block",
                   isHovered && "opacity-100 -translate-y-1"
                 )}>
                   {item.label}
+                  {/* Tooltip arrow */}
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-gray-900/90 dark:border-t-gray-100/90" />
                 </div>
 
                 {/* Dock Item */}
-                <Link to={item.path}>
+                <Link to={item.path} className="block">
                   <Button
                     variant="ghost"
                     size="icon"
                     className={cn(
                       "relative rounded-xl transition-all duration-300 ease-out border-0 hover:bg-transparent",
-                      "w-12 h-12 flex items-center justify-center",
+                      "w-10 h-10 md:w-12 md:h-12 flex items-center justify-center",
                       active && "bg-blue-500/10 dark:bg-blue-400/10"
                     )}
                     style={{
-                      transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 20) : 0}px)`,
+                      transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 16) : 0}px)`,
                       transformOrigin: 'bottom center'
                     }}
                   >
@@ -81,7 +88,7 @@ const FloatingDock = () => {
                     )} />
                     
                     <Icon className={cn(
-                      "relative z-10 w-6 h-6 transition-colors duration-300",
+                      "relative z-10 w-5 h-5 md:w-6 md:h-6 transition-colors duration-300",
                       active ? "text-white" : "text-gray-700 dark:text-gray-300"
                     )} />
                     
