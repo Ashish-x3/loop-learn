@@ -1,3 +1,4 @@
+
 import { useState } from 'react';
 import { Plus, ArrowLeft, Lightbulb, Sparkles, Loader2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,6 +9,7 @@ import { Link } from 'react-router-dom';
 import FloatingDock from '@/components/FloatingDock';
 import ThemeToggle from '@/components/ThemeToggle';
 import { useToast } from '@/hooks/use-toast';
+import { supabase } from '@/integrations/supabase/client';
 
 type Flashcard = {
   id?: string;
@@ -34,35 +36,63 @@ const Create = () => {
   ];
 
   const handleGenerate = async () => {
-    if (!topic.trim()) return;
+    if (!topic.trim()) {
+      toast({
+        title: "Please enter a topic",
+        description: "Type something you'd like to learn about",
+        variant: "destructive"
+      });
+      return;
+    }
+
     setIsLoading(true);
     setFlashcards([]);
 
     try {
-      const resp = await fetch(
-        "https://ftpmfnigubshfarshebm.functions.supabase.co/generate-gemini-flashcards",
-        {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify({ topic })
-        }
-      );
-      const data = await resp.json();
-      if (data.error) {
-        toast({ title: "Generation failed", description: data.error, variant: "destructive" });
-        setIsLoading(false);
+      // Use the corrected edge function that expects an array of topics
+      const response = await supabase.functions.invoke('generate-gemini-flashcards', {
+        body: { topics: [topic.trim()] } // Convert single topic to array
+      });
+
+      if (response.error) {
+        console.error('Edge function error:', response.error);
+        toast({ 
+          title: "Generation failed", 
+          description: response.error.message || "Failed to generate flashcards",
+          variant: "destructive" 
+        });
         return;
       }
-      setFlashcards(data.flashcards || []);
-      toast({
-        title: data.source === "existing" ? "Found existing flashcards!" : "AI Generated new flashcards!",
-        description: (data.flashcards?.length ?? 0) + " flashcards ready"
-      });
+
+      const { flashcards: generatedCards, message } = response.data;
+      
+      if (generatedCards && generatedCards.length > 0) {
+        setFlashcards(generatedCards);
+        toast({
+          title: "Flashcards Generated!",
+          description: message || `Created ${generatedCards.length} flashcards for "${topic}"`
+        });
+      } else {
+        toast({
+          title: "No flashcards generated",
+          description: "Please try again with a different topic",
+          variant: "destructive"
+        });
+      }
     } catch (err: any) {
-      toast({ title: "Error", description: String(err), variant: "destructive" });
+      console.error('Generation error:', err);
+      toast({ 
+        title: "Error", 
+        description: "Failed to generate flashcards. Please try again.",
+        variant: "destructive" 
+      });
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleQuickTopic = (quickTopic: string) => {
+    setTopic(quickTopic);
   };
 
   const renderAnswer = (answer: string) => {
@@ -140,6 +170,7 @@ const Create = () => {
                   placeholder="e.g., JavaScript Closures, React Context, Database Indexing..."
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
+                  onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
                   className="flex-1 text-base p-4 h-12"
                   disabled={isLoading}
                 />
@@ -164,8 +195,9 @@ const Create = () => {
                       key={index}
                       variant="outline"
                       size="sm"
-                      onClick={() => setTopic(quickTopic)}
+                      onClick={() => handleQuickTopic(quickTopic)}
                       className="text-sm justify-start h-10"
+                      disabled={isLoading}
                     >
                       {quickTopic}
                     </Button>
