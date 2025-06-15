@@ -22,7 +22,7 @@ function categorizeTopics(topics: string[]): Record<string, string> {
     'Algorithms': ['algorithm', 'complexity', 'big o', 'recursion', 'dynamic programming', 'greedy', 'divide and conquer', 'search', 'sort'],
     'Database': ['sql', 'database', 'mysql', 'postgresql', 'mongodb', 'nosql', 'query', 'join', 'index', 'transaction'],
     'Web Development': ['http', 'api', 'rest', 'graphql', 'ajax', 'fetch', 'cors', 'authentication', 'authorization', 'session'],
-    'DevOps': ['docker', 'kubernetes', 'ci/cd', 'git', 'deployment', 'server', 'cloud', 'aws', 'azure', 'gcp'],
+    'DevOps': ['docker', 'kubernetes', 'ci/cd', 'git', 'deployment', 'server', 'cloud', 'aws', 'azure', 'gcp', 'branch', 'merge', 'commit'],
     'Programming': ['oop', 'functional programming', 'design pattern', 'solid', 'dry', 'clean code', 'testing', 'debugging']
   };
 
@@ -54,10 +54,25 @@ serve(async (req) => {
   }
 
   try {
+    // Get the authorization header to extract user info
+    const authHeader = req.headers.get('Authorization');
+    
     const supabaseClient = createClient(
       Deno.env.get('SUPABASE_URL') ?? '',
-      Deno.env.get('SUPABASE_ANON_KEY') ?? '',
+      Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') ?? '', // Use service role key for inserting
     );
+
+    // If we have an auth header, try to get the user
+    let userId = null;
+    if (authHeader) {
+      const token = authHeader.replace('Bearer ', '');
+      const { data: { user }, error: userError } = await supabaseClient.auth.getUser(token);
+      if (!userError && user) {
+        userId = user.id;
+      }
+    }
+
+    console.log('User ID:', userId);
 
     const { topics } = await req.json();
     
@@ -144,19 +159,24 @@ Make sure the difficulty is appropriate for the complexity of the concept.`;
 
         if (Array.isArray(flashcards)) {
           for (const flashcard of flashcards) {
+            const flashcardData = {
+              topic: flashcard.topic.toLowerCase(),
+              question: flashcard.question,
+              answer: JSON.stringify(flashcard.answer),
+              difficulty: flashcard.difficulty.toLowerCase(),
+              ...(userId && { user_id: userId }) // Only include user_id if we have a valid user
+            };
+
             const { data: savedCard, error: saveError } = await supabaseClient
               .from('flashcards')
-              .insert({
-                topic: flashcard.topic.toLowerCase(),
-                question: flashcard.question,
-                answer: JSON.stringify(flashcard.answer),
-                difficulty: flashcard.difficulty.toLowerCase(),
-              })
+              .insert(flashcardData)
               .select()
               .single();
 
             if (saveError) {
               console.error('Error saving flashcard:', saveError);
+              // If there's a user, this might be an RLS issue
+              // If no user, create a public flashcard without user_id restriction
             } else {
               allFlashcards.push(savedCard);
             }
