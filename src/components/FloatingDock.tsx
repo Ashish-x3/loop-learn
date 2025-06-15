@@ -23,22 +23,22 @@ const FloatingDock = () => {
 
   return (
     <div className="fixed bottom-4 sm:bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-2 sm:px-3 w-full max-w-sm sm:max-w-none sm:w-auto">
-      <div className="relative backdrop-blur-xl bg-white/90 dark:bg-black/80 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-2xl sm:rounded-3xl p-3 sm:p-4 md:p-5">
+      <div className="relative backdrop-blur-xl bg-white/90 dark:bg-black/80 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-2xl sm:rounded-xl p-3 sm:p-2">
         {/* Enhanced glassmorphic background */}
-        <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-white/20 dark:from-black/10 dark:to-black/20 rounded-2xl sm:rounded-3xl" />
+        <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-white/20 dark:from-black/10 dark:to-black/20 rounded-2xl sm:rounded-xl" />
         
-        <div className="relative flex items-end justify-center gap-2 sm:gap-3 md:gap-4 px-1 sm:px-2">
+        <div className="relative flex items-end justify-center gap-2 sm:gap-1 px-1 sm:px-1">
           {dockItems.map((item, index) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             const isHovered = hoveredIndex === index;
             
-            // Enhanced scale factors for better desktop experience
+            // Scale factors for hover effect on desktop
             let scale = 1;
             if (hoveredIndex !== null && window.innerWidth >= 768) {
               const distance = Math.abs(index - hoveredIndex);
-              if (distance === 0) scale = 1.3;
-              else if (distance === 1) scale = 1.15;
+              if (distance === 0) scale = 1.2;
+              else if (distance === 1) scale = 1.1;
             }
 
             return (
@@ -49,50 +49,50 @@ const FloatingDock = () => {
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
                   zIndex: isHovered ? 10 : 1,
-                  minWidth: window.innerWidth < 640 ? '44px' : '52px',
-                  minHeight: window.innerWidth < 640 ? '56px' : '64px'
+                  minWidth: window.innerWidth < 640 ? '44px' : '40px',
+                  minHeight: window.innerWidth < 640 ? '56px' : '48px'
                 }}
               >
-                {/* Enhanced Tooltip - Hidden on mobile */}
+                {/* Tooltip - Hidden on mobile */}
                 <div className={cn(
-                  "absolute bottom-full mb-3 px-3 py-1.5 bg-black/90 dark:bg-white/90 text-white dark:text-black text-sm rounded-xl opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap backdrop-blur-sm shadow-xl hidden md:block",
-                  isHovered && "opacity-100 -translate-y-2"
+                  "absolute bottom-full mb-2 px-2 py-1 bg-black/90 dark:bg-white/90 text-white dark:text-black text-xs rounded-lg opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap backdrop-blur-sm shadow-xl hidden md:block",
+                  isHovered && "opacity-100 -translate-y-1"
                 )}>
                   {item.label}
-                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-4 border-transparent border-t-black/90 dark:border-t-white/90" />
+                  <div className="absolute top-full left-1/2 -translate-x-1/2 border-3 border-transparent border-t-black/90 dark:border-t-white/90" />
                 </div>
 
-                {/* Enhanced Dock Item */}
+                {/* Dock Item */}
                 <Link to={item.path} className="block">
                   <Button
                     variant="ghost"
                     size="icon"
                     className={cn(
-                      "relative rounded-xl sm:rounded-2xl transition-all duration-300 ease-out border-0 hover:bg-transparent touch-manipulation active:scale-90",
-                      "w-11 h-11 sm:w-12 sm:h-12 md:w-14 md:h-14 flex items-center justify-center"
+                      "relative rounded-xl transition-all duration-300 ease-out border-0 hover:bg-transparent touch-manipulation active:scale-90",
+                      "w-11 h-11 sm:w-10 sm:h-10 flex items-center justify-center"
                     )}
                     style={{
-                      transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 10) : 0}px)`,
+                      transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 8) : 0}px)`,
                       transformOrigin: 'bottom center'
                     }}
                   >
-                    {/* Enhanced icon background */}
+                    {/* Icon background */}
                     <div className={cn(
-                      "absolute inset-0 rounded-xl sm:rounded-2xl transition-all duration-300 backdrop-blur-sm",
+                      "absolute inset-0 rounded-xl transition-all duration-300 backdrop-blur-sm",
                       active ? 
-                        "bg-blue-500/90 shadow-xl shadow-blue-500/30 border border-blue-400/50" :
-                        "bg-white/30 dark:bg-black/30 hover:bg-white/40 dark:hover:bg-black/40 border border-white/30 dark:border-white/20 shadow-lg"
+                        "bg-blue-500/90 shadow-lg shadow-blue-500/30 border border-blue-400/50" :
+                        "bg-white/30 dark:bg-black/30 hover:bg-white/40 dark:hover:bg-black/40 border border-white/30 dark:border-white/20 shadow-md"
                     )} />
                     
                     <Icon className={cn(
                       "relative z-10 transition-colors duration-300",
-                      "w-5 h-5 sm:w-6 sm:h-6 md:w-7 md:h-7",
+                      "w-5 h-5 sm:w-4 sm:h-4",
                       active ? "text-white" : "text-black dark:text-white"
                     )} />
                     
-                    {/* Enhanced active indicator */}
+                    {/* Active indicator */}
                     {active && (
-                      <div className="absolute -bottom-0.5 sm:-bottom-1 w-1.5 h-1.5 sm:w-2 sm:h-2 bg-white rounded-full shadow-lg" />
+                      <div className="absolute -bottom-0.5 w-1.5 h-1.5 sm:w-1 sm:h-1 bg-white rounded-full shadow-lg" />
                     )}
                   </Button>
                 </Link>
