@@ -18,6 +18,7 @@ type Flashcard = {
   answer: string;
   difficulty: string;
   created_at?: string;
+  user_id?: string | null;
 };
 
 const Create = () => {

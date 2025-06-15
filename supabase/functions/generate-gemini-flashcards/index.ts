@@ -100,7 +100,7 @@ serve(async (req) => {
     for (const topic of topics) {
       const category = topicCategories[topic];
       
-      const prompt = `Create exactly 3 educational flashcards about "${topic}" in the "${category}" category. 
+      const prompt = `Create exactly 10 educational flashcards about "${topic}" in the "${category}" category. 
 
 For each flashcard, provide:
 1. A clear, specific question about the topic

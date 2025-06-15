@@ -18,6 +18,7 @@ export type Database = {
           question: string
           topic: string
           updated_at: string
+          user_id: string | null
         }
         Insert: {
           answer: string
@@ -27,6 +28,7 @@ export type Database = {
           question: string
           topic: string
           updated_at?: string
+          user_id?: string | null
         }
         Update: {
           answer?: string
@@ -36,6 +38,7 @@ export type Database = {
           question?: string
           topic?: string
           updated_at?: string
+          user_id?: string | null
         }
         Relationships: []
       }
