@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Search, Plus, Loader2, BookOpen, Lightbulb } from 'lucide-react';
 import { Input } from '@/components/ui/input';
@@ -8,6 +7,7 @@ import { Badge } from '@/components/ui/badge';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
 import { Link } from 'react-router-dom';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface Flashcard {
   id: string;
@@ -24,11 +24,39 @@ const TopicSearch = () => {
   const [searchResults, setSearchResults] = useState<Flashcard[]>([]);
   const [hasSearched, setHasSearched] = useState(false);
   const { toast } = useToast();
+  const { user } = useAuth();
 
   const suggestedTopics = [
     'React Hooks', 'JavaScript ES6', 'CSS Flexbox', 'Node.js Basics', 
     'Python Functions', 'Data Structures', 'Git Commands', 'API Design'
   ];
+
+  // Helper: Save flashcard for the logged in user
+  const handleSaveFlashcard = async (card: Flashcard) => {
+    if (!user) {
+      toast({ 
+        title: "Please sign in to save flashcards!",
+        variant: "destructive" 
+      });
+      return;
+    }
+    try {
+      // Upsert user_progress row for flashcard
+      const { data, error } = await supabase
+        .from('user_progress')
+        .upsert({
+          user_id: user.id,
+          flashcard_id: card.id,
+          attempts: 0,
+          is_mastered: false,
+        }, { onConflict: 'user_id,flashcard_id' });
+
+      if (error) throw error;
+      toast({ title: "Flashcard saved!", description: `"${card.question}" added to your Saved cards.` });
+    } catch (e) {
+      toast({ title: "Could not save card", description: "Already saved or there was a problem.", variant: "destructive" });
+    }
+  };
 
   const handleSearch = async () => {
     if (!searchTerm.trim()) {
@@ -161,13 +189,8 @@ const TopicSearch = () => {
         <div className="max-w-6xl mx-auto px-4">
           {isGenerating ? (
             <div className="text-center py-12">
-              <div className="flex flex-col items-center space-y-4">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-                <div className="space-y-2">
-                  <h3 className="text-lg font-semibold">Generating Flashcards...</h3>
-                  <p className="text-muted-foreground">Creating personalized learning content for "{searchTerm}"</p>
-                </div>
-              </div>
+              <Loader2 className="w-8 h-8 animate-spin text-primary mx-auto" />
+              <h3 className="mt-4 text-lg font-semibold">Generating Flashcards...</h3>
             </div>
           ) : (
             <>
@@ -177,60 +200,36 @@ const TopicSearch = () => {
                     <h3 className="text-xl font-bold mb-2">
                       Found {searchResults.length} flashcards for "{searchTerm}"
                     </h3>
-                    <p className="text-muted-foreground">Click on a topic to start learning</p>
+                    <p className="text-muted-foreground">Click Save to keep cards or go to Saved tab to review</p>
                   </div>
-                  
                   <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                    {uniqueTopics.map((topic) => {
-                      const topicCards = searchResults.filter(card => card.topic === topic);
-                      const difficulties = [...new Set(topicCards.map(card => card.difficulty))];
-                      
-                      return (
-                        <Link key={topic} to={`/learn/${topic}`}>
-                          <Card className="group overflow-hidden border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer">
-                            <CardHeader className="p-4">
-                              <div className="flex items-center space-x-3">
-                                <div className="w-12 h-12 bg-primary/80 rounded-xl flex items-center justify-center">
-                                  <BookOpen className="w-6 h-6 text-white" />
-                                </div>
-                                <div className="flex-1">
-                                  <CardTitle className="text-lg capitalize">{topic}</CardTitle>
-                                  <CardDescription className="text-sm">
-                                    {topicCards.length} flashcards
-                                  </CardDescription>
-                                </div>
-                              </div>
-                            </CardHeader>
-                            <CardContent className="p-4 pt-0">
-                              <div className="flex flex-wrap gap-1">
-                                {difficulties.map((difficulty) => (
-                                  <Badge 
-                                    key={difficulty} 
-                                    variant="secondary" 
-                                    className="text-xs bg-primary/20 text-primary border-primary/30"
-                                  >
-                                    {difficulty}
-                                  </Badge>
-                                ))}
-                              </div>
-                            </CardContent>
-                          </Card>
-                        </Link>
-                      );
-                    })}
+                    {searchResults.map((card) => (
+                      <Card key={card.id} className="group border bg-white/70 dark:bg-black/30 transition-shadow">
+                        <CardHeader className="p-4 pt-2 flex flex-row justify-between items-center">
+                          <div>
+                            <CardTitle className="text-base font-semibold">{card.question}</CardTitle>
+                            <CardDescription className="text-xs mb-2">{card.topic} &middot; {card.difficulty}</CardDescription>
+                          </div>
+                          <Button
+                            size="sm"
+                            variant="default"
+                            onClick={() => handleSaveFlashcard(card)}
+                            className="ml-2"
+                          >
+                            Save
+                          </Button>
+                        </CardHeader>
+                        <CardContent className="p-4 pt-0">
+                          <div className="text-sm">{card.answer}</div>
+                        </CardContent>
+                      </Card>
+                    ))}
                   </div>
                 </div>
               ) : (
                 <div className="text-center py-12">
-                  <div className="space-y-4">
-                    <div className="w-16 h-16 mx-auto bg-muted rounded-full flex items-center justify-center">
-                      <Search className="w-8 h-8 text-muted-foreground" />
-                    </div>
-                    <div className="space-y-2">
-                      <h3 className="text-lg font-semibold">No flashcards found</h3>
-                      <p className="text-muted-foreground">Try searching for a different topic or check your spelling</p>
-                    </div>
-                  </div>
+                  <h3 className="text-lg font-semibold">No flashcards found</h3>
+                  <p className="text-muted-foreground">Try searching for a different topic or check your spelling</p>
                 </div>
               )}
             </>
