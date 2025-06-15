@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { BookOpen, Code, Palette, Globe, Database, Server, Cpu, Brain } from 'lucide-react';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -45,9 +44,11 @@ const TopicCategories = () => {
     return colorMap[category] || 'from-gray-500 to-slate-600';
   };
 
-  // Function to create URL-safe topic slug
+  // Function to create URL-safe topic slug - EXACT conversion that matches LearnMode parsing
   const createTopicSlug = (topic: string) => {
-    return encodeURIComponent(topic.toLowerCase().replace(/\s+/g, '-'));
+    // Convert topic to lowercase and replace spaces with hyphens, then URL encode
+    const slug = topic.toLowerCase().replace(/\s+/g, '-');
+    return encodeURIComponent(slug);
   };
 
   if (isLoading) {

@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -23,29 +22,34 @@ const LearnMode = () => {
   // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // Filter flashcards by topic - handle both URL format and exact match
+  // Filter flashcards by exact topic match - much stricter filtering
   const flashcards = topic 
     ? allFlashcards.filter(card => {
-        // Normalize both the card topic and URL topic for comparison
-        const normalizedCardTopic = card.topic.toLowerCase().replace(/\s+/g, '-');
-        const normalizedUrlTopic = decodeURIComponent(topic).toLowerCase().replace(/\s+/g, '-');
+        // Decode the URL topic parameter
+        const decodedTopic = decodeURIComponent(topic);
         
-        console.log('Filtering comparison:', { 
-          cardTopic: card.topic, 
-          normalizedCardTopic, 
-          urlTopic: topic, 
-          normalizedUrlTopic,
-          match: normalizedCardTopic === normalizedUrlTopic 
+        // Convert URL format back to original topic format
+        const originalTopic = decodedTopic.split('-').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ');
+        
+        console.log('Filtering flashcards:', {
+          urlTopic: topic,
+          decodedTopic,
+          originalTopic,
+          cardTopic: card.topic,
+          exactMatch: card.topic === originalTopic
         });
         
-        return normalizedCardTopic === normalizedUrlTopic;
+        // Only include cards that exactly match the topic
+        return card.topic === originalTopic;
       })
     : allFlashcards;
   
   console.log('Topic from URL:', topic);
-  console.log('Decoded topic:', topic ? decodeURIComponent(topic) : 'none');
-  console.log('All flashcards topics:', allFlashcards.map(f => f.topic));
-  console.log('Filtered flashcards:', flashcards.map(f => f.topic));
+  console.log('All available topics:', [...new Set(allFlashcards.map(f => f.topic))]);
+  console.log('Filtered flashcards count:', flashcards.length);
+  console.log('Filtered flashcards topics:', [...new Set(flashcards.map(f => f.topic))]);
 
   // Reset state when topic changes
   useEffect(() => {
@@ -142,7 +146,8 @@ const LearnMode = () => {
 
   // Show message if no flashcards found for specific topic
   if (topic && flashcards.length === 0) {
-    const topicDisplayName = decodeURIComponent(topic).split('-').map(word => 
+    const decodedTopic = decodeURIComponent(topic);
+    const topicDisplayName = decodedTopic.split('-').map(word => 
       word.charAt(0).toUpperCase() + word.slice(1)
     ).join(' ');
 
@@ -154,7 +159,7 @@ const LearnMode = () => {
             No flashcards found for topic: <strong>{topicDisplayName}</strong>
           </p>
           <p className="text-sm text-muted-foreground">
-            Try generating some flashcards for this topic first.
+            Available topics: {[...new Set(allFlashcards.map(f => f.topic))].join(', ')}
           </p>
           <div className="flex gap-3 justify-center">
             <Link to="/create">
@@ -272,6 +277,11 @@ const LearnMode = () => {
           <Badge className="bg-primary/20 text-primary border-primary/30">
             Learning: {topicDisplayName}
           </Badge>
+        </div>
+
+        {/* Debug info */}
+        <div className="text-xs text-muted-foreground text-center">
+          Topic: {topicDisplayName} | Cards: {flashcards.length} | Current: {currentCard?.topic}
         </div>
 
         {/* Flashcard */}
