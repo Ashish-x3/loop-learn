@@ -45,26 +45,26 @@ const Goals = () => {
   const completedGoals = goals.filter(goal => goal.status === 'completed');
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-white dark:bg-black">
       {/* Header */}
-      <div className="border-b bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 sticky top-0 z-40">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Link to="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
+      <div className="border-b border-white/20 dark:border-white/10 backdrop-blur-xl bg-white/10 dark:bg-black/20 sticky top-0 z-40">
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-4">
+          <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm" className="text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20 p-2 sm:px-3">
+                  <ArrowLeft className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Back</span>
                 </Button>
               </Link>
               <div>
-                <h1 className="text-2xl font-bold">Learning Goals</h1>
-                <p className="text-sm text-muted-foreground">
+                <h1 className="text-xl sm:text-2xl font-bold text-black dark:text-white">Learning Goals</h1>
+                <p className="text-xs sm:text-sm text-black/70 dark:text-white/70 mt-1">
                   Set and track your learning objectives
                 </p>
               </div>
             </div>
-            <Button>
+            <Button className="w-full sm:w-auto bg-blue-500/80 hover:bg-blue-600/80 text-white border-0 backdrop-blur-sm">
               <Plus className="w-4 h-4 mr-2" />
               New Goal
             </Button>
@@ -72,72 +72,76 @@ const Goals = () => {
         </div>
       </div>
 
-      <div className="container mx-auto px-4 py-8 pb-32">
+      <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 sm:pb-32">
         {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Target className="w-8 h-8 text-blue-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold">{activeGoals.length}</div>
-              <p className="text-sm text-muted-foreground">Active Goals</p>
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
+          <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <Target className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-black dark:text-white">{activeGoals.length}</div>
+              <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Active Goals</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <CheckCircle className="w-8 h-8 text-green-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold">{completedGoals.length}</div>
-              <p className="text-sm text-muted-foreground">Completed</p>
+          <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <CheckCircle className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-black dark:text-white">{completedGoals.length}</div>
+              <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Completed</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <Clock className="w-8 h-8 text-orange-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold">7</div>
-              <p className="text-sm text-muted-foreground">Days Avg</p>
+          <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <Clock className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-black dark:text-white">7</div>
+              <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Days Avg</p>
             </CardContent>
           </Card>
-          <Card>
-            <CardContent className="p-6 text-center">
-              <BarChart3 className="w-8 h-8 text-purple-600 mx-auto mb-2" />
-              <div className="text-2xl font-bold">85%</div>
-              <p className="text-sm text-muted-foreground">Success Rate</p>
+          <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+            <CardContent className="p-4 sm:p-6 text-center">
+              <BarChart3 className="w-6 h-6 sm:w-8 sm:h-8 text-blue-500 mx-auto mb-2" />
+              <div className="text-xl sm:text-2xl font-bold text-black dark:text-white">85%</div>
+              <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Success Rate</p>
             </CardContent>
           </Card>
         </div>
 
         {/* Active Goals */}
-        <div className="space-y-6 mb-8">
-          <h2 className="text-xl font-semibold">Active Goals</h2>
-          <div className="grid gap-4">
+        <div className="space-y-4 sm:space-y-6 mb-6 sm:mb-8">
+          <h2 className="text-lg sm:text-xl font-semibold text-black dark:text-white">Active Goals</h2>
+          <div className="grid gap-3 sm:gap-4">
             {activeGoals.map((goal) => (
-              <Card key={goal.id}>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
+              <Card key={goal.id} className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+                <CardHeader className="p-4 sm:p-6">
+                  <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                     <div className="space-y-1">
-                      <CardTitle className="text-lg">{goal.title}</CardTitle>
-                      <CardDescription>{goal.description}</CardDescription>
+                      <CardTitle className="text-base sm:text-lg text-black dark:text-white">{goal.title}</CardTitle>
+                      <CardDescription className="text-sm text-black/70 dark:text-white/70">{goal.description}</CardDescription>
                     </div>
-                    <Badge variant="secondary">{goal.category}</Badge>
+                    <Badge variant="secondary" className="w-fit bg-white/20 dark:bg-black/20 text-black dark:text-white border-white/20 dark:border-white/10">
+                      {goal.category}
+                    </Badge>
                   </div>
                 </CardHeader>
-                <CardContent>
-                  <div className="space-y-4">
+                <CardContent className="p-4 sm:p-6 pt-0">
+                  <div className="space-y-3 sm:space-y-4">
                     <div className="flex items-center justify-between text-sm">
-                      <span>Progress</span>
-                      <span>{goal.progress}/{goal.target}</span>
+                      <span className="text-black dark:text-white">Progress</span>
+                      <span className="text-black/70 dark:text-white/70">{goal.progress}/{goal.target}</span>
                     </div>
-                    <div className="w-full bg-secondary rounded-full h-2">
+                    <div className="w-full bg-white/20 dark:bg-black/20 rounded-full h-2">
                       <div 
-                        className="bg-primary h-2 rounded-full transition-all" 
+                        className="bg-blue-500 h-2 rounded-full transition-all" 
                         style={{ width: `${(goal.progress / goal.target) * 100}%` }}
                       />
                     </div>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-sm text-muted-foreground">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                      <div className="flex items-center text-sm text-black/70 dark:text-white/70">
                         <Calendar className="w-4 h-4 mr-1" />
                         Due {new Date(goal.deadline).toLocaleDateString()}
                       </div>
-                      <Button size="sm">Continue</Button>
+                      <Button size="sm" className="w-full sm:w-auto bg-blue-500/80 hover:bg-blue-600/80 text-white border-0 backdrop-blur-sm">
+                        Continue
+                      </Button>
                     </div>
                   </div>
                 </CardContent>
@@ -148,30 +152,34 @@ const Goals = () => {
 
         {/* Completed Goals */}
         {completedGoals.length > 0 && (
-          <div className="space-y-6">
-            <h2 className="text-xl font-semibold">Completed Goals</h2>
-            <div className="grid gap-4">
+          <div className="space-y-4 sm:space-y-6">
+            <h2 className="text-lg sm:text-xl font-semibold text-black dark:text-white">Completed Goals</h2>
+            <div className="grid gap-3 sm:gap-4">
               {completedGoals.map((goal) => (
-                <Card key={goal.id} className="opacity-75">
-                  <CardHeader>
-                    <div className="flex items-center justify-between">
+                <Card key={goal.id} className="opacity-75 border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
+                  <CardHeader className="p-4 sm:p-6">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
                       <div className="space-y-1">
-                        <CardTitle className="text-lg flex items-center">
+                        <CardTitle className="text-base sm:text-lg flex items-center text-black dark:text-white">
                           {goal.title}
-                          <CheckCircle className="w-5 h-5 text-green-600 ml-2" />
+                          <CheckCircle className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500 ml-2" />
                         </CardTitle>
-                        <CardDescription>{goal.description}</CardDescription>
+                        <CardDescription className="text-sm text-black/70 dark:text-white/70">{goal.description}</CardDescription>
                       </div>
-                      <Badge variant="secondary">{goal.category}</Badge>
+                      <Badge variant="secondary" className="w-fit bg-white/20 dark:bg-black/20 text-black dark:text-white border-white/20 dark:border-white/10">
+                        {goal.category}
+                      </Badge>
                     </div>
                   </CardHeader>
-                  <CardContent>
-                    <div className="flex items-center justify-between">
-                      <div className="flex items-center text-sm text-muted-foreground">
+                  <CardContent className="p-4 sm:p-6 pt-0">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 sm:gap-0">
+                      <div className="flex items-center text-sm text-black/70 dark:text-white/70">
                         <Calendar className="w-4 h-4 mr-1" />
                         Completed {new Date(goal.deadline).toLocaleDateString()}
                       </div>
-                      <Badge variant="outline" className="text-green-600">Completed</Badge>
+                      <Badge variant="outline" className="w-fit text-blue-500 border-blue-500/20 bg-blue-500/10">
+                        Completed
+                      </Badge>
                     </div>
                   </CardContent>
                 </Card>

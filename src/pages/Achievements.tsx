@@ -51,32 +51,35 @@ const Achievements = () => {
       
       {/* Header */}
       <header className="border-b border-white/20 dark:border-white/10 backdrop-blur-xl bg-white/10 dark:bg-black/20">
-        <div className="container mx-auto px-4 sm:px-6 py-4 sm:py-6">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
-            <div>
-              <h1 className="text-2xl sm:text-3xl font-bold tracking-tight text-black dark:text-white">Achievements</h1>
-              <p className="text-black/70 dark:text-white/70 mt-1 sm:mt-2 text-sm sm:text-base">
-                Track your learning progress and unlock new badges
-              </p>
+        <div className="container mx-auto px-4 sm:px-6 py-3 sm:py-6">
+          <div className="flex flex-col space-y-3 sm:space-y-0 sm:flex-row sm:items-center sm:justify-between">
+            <div className="flex items-center space-x-3 sm:space-x-4">
+              <Link to="/dashboard">
+                <Button variant="ghost" size="sm" className="text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20 p-2 sm:px-3">
+                  <Target className="w-4 h-4 sm:mr-2" />
+                  <span className="hidden sm:inline">Dashboard</span>
+                </Button>
+              </Link>
+              <div>
+                <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold tracking-tight text-black dark:text-white">Achievements</h1>
+                <p className="text-black/70 dark:text-white/70 mt-1 text-xs sm:text-sm lg:text-base">
+                  Track your learning progress and unlock new badges
+                </p>
+              </div>
             </div>
-            <Link to="/dashboard">
-              <Button variant="outline" className="bg-white/10 dark:bg-black/10 border-white/20 dark:border-white/10 text-black dark:text-white hover:bg-white/20 dark:hover:bg-black/20 text-sm sm:text-base">
-                Back to Dashboard
-              </Button>
-            </Link>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 sm:pb-32">
+      <main className="container mx-auto px-4 sm:px-6 py-4 sm:py-6 lg:py-8 pb-24 sm:pb-32">
         {/* Stats Overview */}
         <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4 mb-6 sm:mb-8">
           <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-3 sm:p-4 lg:p-6">
               <div className="flex items-center space-x-2">
-                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                <Trophy className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-black dark:text-white">2</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">2</p>
                   <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Unlocked</p>
                 </div>
               </div>
@@ -84,11 +87,11 @@ const Achievements = () => {
           </Card>
           
           <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-3 sm:p-4 lg:p-6">
               <div className="flex items-center space-x-2">
-                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                <Target className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-black dark:text-white">42</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">42</p>
                   <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Cards Mastered</p>
                 </div>
               </div>
@@ -96,11 +99,11 @@ const Achievements = () => {
           </Card>
 
           <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-3 sm:p-4 lg:p-6">
               <div className="flex items-center space-x-2">
-                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                <Calendar className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-black dark:text-white">7</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">7</p>
                   <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Day Streak</p>
                 </div>
               </div>
@@ -108,11 +111,11 @@ const Achievements = () => {
           </Card>
 
           <Card className="border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10">
-            <CardContent className="p-4 sm:p-6">
+            <CardContent className="p-3 sm:p-4 lg:p-6">
               <div className="flex items-center space-x-2">
-                <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-blue-600" />
+                <Zap className="w-4 h-4 sm:w-5 sm:h-5 text-blue-500" />
                 <div>
-                  <p className="text-xl sm:text-2xl font-bold text-black dark:text-white">89%</p>
+                  <p className="text-lg sm:text-xl lg:text-2xl font-bold text-black dark:text-white">89%</p>
                   <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">Accuracy</p>
                 </div>
               </div>
@@ -121,30 +124,30 @@ const Achievements = () => {
         </div>
 
         {/* Achievements Grid */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 sm:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 lg:gap-6">
           {achievements.map((achievement) => (
             <Card key={achievement.id} className={`transition-all border-0 backdrop-blur-xl border border-white/20 dark:border-white/10 ${achievement.unlocked ? 'bg-blue-500/10 border-blue-500/20' : 'bg-white/10 dark:bg-black/20'}`}>
-              <CardHeader className="p-4 sm:p-6">
-                <div className="flex items-center space-x-3">
+              <CardHeader className="p-3 sm:p-4 lg:p-6">
+                <div className="flex items-start sm:items-center space-x-3">
                   <div className={`p-2 rounded-lg backdrop-blur-sm ${achievement.unlocked ? 'bg-blue-500/20' : 'bg-white/20 dark:bg-black/20'}`}>
-                    <achievement.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${achievement.unlocked ? 'text-blue-600' : 'text-black/70 dark:text-white/70'}`} />
+                    <achievement.icon className={`w-5 h-5 sm:w-6 sm:h-6 ${achievement.unlocked ? 'text-blue-500' : 'text-black/70 dark:text-white/70'}`} />
                   </div>
-                  <div className="flex-1">
-                    <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2 text-black dark:text-white text-base sm:text-lg">
-                      {achievement.title}
+                  <div className="flex-1 min-w-0">
+                    <CardTitle className="flex flex-col sm:flex-row sm:items-center gap-2 text-black dark:text-white text-sm sm:text-base lg:text-lg">
+                      <span className="truncate">{achievement.title}</span>
                       {achievement.unlocked && (
-                        <Badge className="text-blue-700 bg-blue-100/80 dark:bg-blue-900/30 dark:text-blue-300 text-xs w-fit">
+                        <Badge className="text-blue-700 bg-blue-100/80 dark:bg-blue-900/30 dark:text-blue-300 text-xs w-fit shrink-0">
                           Unlocked
                         </Badge>
                       )}
                     </CardTitle>
-                    <CardDescription className="text-black/70 dark:text-white/70 text-sm">
+                    <CardDescription className="text-black/70 dark:text-white/70 text-xs sm:text-sm mt-1">
                       {achievement.description}
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-4 sm:p-6 pt-0">
+              <CardContent className="p-3 sm:p-4 lg:p-6 pt-0">
                 {achievement.unlocked ? (
                   <p className="text-xs sm:text-sm text-black/70 dark:text-white/70">
                     Unlocked on {new Date(achievement.unlockedDate).toLocaleDateString()}
