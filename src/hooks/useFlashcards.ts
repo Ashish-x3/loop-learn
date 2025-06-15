@@ -14,7 +14,7 @@ export interface Flashcard {
 
 // Transform Supabase flashcard to match FlashcardView expectations
 const transformFlashcard = (card: Flashcard) => ({
-  id: card.id,
+  id: parseInt(card.id.slice(-8), 16), // Convert string ID to number for compatibility
   topic: card.topic,
   category: card.topic, // Use topic as category
   difficulty: card.difficulty as "Beginner" | "Intermediate" | "Advanced",
