@@ -35,7 +35,7 @@ const TopicCategories = () => {
               <Card className="group overflow-hidden border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer min-h-[140px] sm:min-h-[160px]">
                 <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4 flex flex-col justify-center h-full">
                   <div className="flex justify-center">
-                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-blue-500/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
+                    <div className="w-12 h-12 sm:w-16 sm:h-16 bg-primary/80 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300 backdrop-blur-sm">
                       <Icon className="w-6 h-6 sm:w-8 sm:h-8 text-white" />
                     </div>
                   </div>
@@ -52,14 +52,14 @@ const TopicCategories = () => {
                   {/* Progress indicator */}
                   <div className="w-full bg-white/20 dark:bg-black/20 rounded-full h-1.5 sm:h-2 backdrop-blur-sm">
                     <div 
-                      className="bg-blue-500/80 h-1.5 sm:h-2 rounded-full transition-all duration-1000 group-hover:w-full"
+                      className="bg-primary/80 h-1.5 sm:h-2 rounded-full transition-all duration-1000 group-hover:w-full"
                       style={{ width: `${Math.random() * 60 + 20}%` }}
                     />
                   </div>
                 </CardContent>
 
                 {/* Decorative elements */}
-                <div className="absolute top-2 right-2 w-8 h-8 sm:w-12 sm:h-12 bg-blue-500/10 rounded-full blur-lg group-hover:bg-blue-500/20 transition-all" />
+                <div className="absolute top-2 right-2 w-8 h-8 sm:w-12 sm:h-12 bg-primary/10 rounded-full blur-lg group-hover:bg-primary/20 transition-all" />
               </Card>
             </Link>
           );
