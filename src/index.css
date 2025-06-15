@@ -45,6 +45,9 @@
     --sidebar-accent-foreground: 240 5.9% 10%;
     --sidebar-border: 220 13% 91%;
     --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Default accent color (blue) */
+    --accent-color: #3b82f6;
   }
 
   .dark {
@@ -136,6 +139,19 @@
   /* Apple-style gradients */
   .gradient-text {
     @apply bg-gradient-to-r from-purple-600 via-blue-600 to-cyan-600 bg-clip-text text-transparent;
+  }
+
+  /* Accent color utility */
+  .accent-color {
+    color: var(--accent-color);
+  }
+
+  .bg-accent-color {
+    background-color: var(--accent-color);
+  }
+
+  .border-accent-color {
+    border-color: var(--accent-color);
   }
 
   /* Smooth scrollbar */

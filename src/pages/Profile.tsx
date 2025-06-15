@@ -1,14 +1,18 @@
 
 import { useState } from 'react';
-import { User, Settings, Trophy, Target, Brain, Calendar, ArrowLeft, Edit } from 'lucide-react';
+import { User, Settings, Trophy, Target, Brain, Calendar, ArrowLeft, Edit, Palette, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 import { Separator } from '@/components/ui/separator';
+import { Switch } from '@/components/ui/switch';
 import FloatingDock from '@/components/FloatingDock';
+import { useTheme } from '@/contexts/ThemeContext';
 
 const Profile = () => {
+  const { isDark, accentColor, setIsDark, setAccentColor } = useTheme();
+  
   const user = {
     name: "Alex Johnson",
     email: "alex@example.com", 
@@ -36,6 +40,15 @@ const Profile = () => {
     difficulty: "Intermediate",
     notifications: true
   };
+
+  const accentColors = [
+    { name: 'Blue', value: 'blue', color: 'bg-blue-500' },
+    { name: 'Purple', value: 'purple', color: 'bg-purple-500' },
+    { name: 'Green', value: 'green', color: 'bg-green-500' },
+    { name: 'Orange', value: 'orange', color: 'bg-orange-500' },
+    { name: 'Pink', value: 'pink', color: 'bg-pink-500' },
+    { name: 'Red', value: 'red', color: 'bg-red-500' }
+  ];
 
   return (
     <div className="min-h-screen bg-background">
@@ -112,23 +125,55 @@ const Profile = () => {
         </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
-          {/* Recent Activity */}
+          {/* Customization Section */}
           <Card>
             <CardHeader>
-              <CardTitle>Recent Activity</CardTitle>
-              <CardDescription>Your latest learning actions</CardDescription>
+              <CardTitle className="flex items-center gap-2">
+                <Palette className="w-5 h-5" />
+                Customization
+              </CardTitle>
+              <CardDescription>Personalize your app appearance</CardDescription>
             </CardHeader>
-            <CardContent className="space-y-4">
-              {recentActivity.map((activity, index) => (
-                <div key={index} className="flex items-center justify-between py-2">
+            <CardContent className="space-y-6">
+              {/* Theme Toggle */}
+              <div className="flex items-center justify-between">
+                <div className="flex items-center space-x-3">
+                  {isDark ? <Moon className="w-4 h-4" /> : <Sun className="w-4 h-4" />}
                   <div>
-                    <p className="font-medium text-sm">
-                      {activity.action} <span className="text-primary">{activity.item}</span>
+                    <p className="font-medium">Dark Mode</p>
+                    <p className="text-sm text-muted-foreground">
+                      {isDark ? 'Dark theme enabled' : 'Light theme enabled'}
                     </p>
-                    <p className="text-xs text-muted-foreground">{activity.time}</p>
                   </div>
                 </div>
-              ))}
+                <Switch checked={isDark} onCheckedChange={setIsDark} />
+              </div>
+              
+              <Separator />
+              
+              {/* Accent Color Selection */}
+              <div className="space-y-3">
+                <div>
+                  <p className="font-medium">Accent Color</p>
+                  <p className="text-sm text-muted-foreground">Choose your preferred accent color</p>
+                </div>
+                <div className="grid grid-cols-3 gap-3">
+                  {accentColors.map((color) => (
+                    <button
+                      key={color.value}
+                      onClick={() => setAccentColor(color.value as any)}
+                      className={`flex items-center space-x-2 p-3 rounded-lg border transition-all ${
+                        accentColor === color.value 
+                          ? 'border-primary bg-primary/5' 
+                          : 'border-border hover:border-primary/50'
+                      }`}
+                    >
+                      <div className={`w-4 h-4 rounded-full ${color.color}`} />
+                      <span className="text-sm font-medium">{color.name}</span>
+                    </button>
+                  ))}
+                </div>
+              </div>
             </CardContent>
           </Card>
 
@@ -168,6 +213,26 @@ const Profile = () => {
             </CardContent>
           </Card>
         </div>
+
+        {/* Recent Activity */}
+        <Card className="mt-8">
+          <CardHeader>
+            <CardTitle>Recent Activity</CardTitle>
+            <CardDescription>Your latest learning actions</CardDescription>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            {recentActivity.map((activity, index) => (
+              <div key={index} className="flex items-center justify-between py-2">
+                <div>
+                  <p className="font-medium text-sm">
+                    {activity.action} <span className="text-primary">{activity.item}</span>
+                  </p>
+                  <p className="text-xs text-muted-foreground">{activity.time}</p>
+                </div>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
 
         {/* Quick Actions */}
         <Card className="mt-8">
