@@ -1,6 +1,5 @@
-
 import { useState } from 'react';
-import { User, Brain, Trophy, Target, Home, Plus, BookOpen } from 'lucide-react';
+import { User, Brain, Trophy, Home, Plus, BookOpen } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
@@ -15,7 +14,6 @@ const FloatingDock = () => {
     { icon: Plus, label: 'Create', path: '/create' },
     { icon: BookOpen, label: 'Saved', path: '/saved' },
     { icon: Trophy, label: 'Achievements', path: '/achievements' },
-    { icon: Target, label: 'Goals', path: '/goals' },
     { icon: User, label: 'Profile', path: '/profile' }
   ];
 
