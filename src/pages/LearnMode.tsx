@@ -22,27 +22,27 @@ const LearnMode = () => {
   // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // Filter flashcards by exact topic match - much stricter filtering
+  // Filter flashcards by exact topic match - using case-insensitive comparison
   const flashcards = topic 
     ? allFlashcards.filter(card => {
         // Decode the URL topic parameter
         const decodedTopic = decodeURIComponent(topic);
         
-        // Convert URL format back to original topic format
-        const originalTopic = decodedTopic.split('-').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ');
+        // Convert URL slug back to a normalized format for comparison
+        const normalizedUrlTopic = decodedTopic.replace(/-/g, ' ').toLowerCase().trim();
+        const normalizedCardTopic = card.topic.toLowerCase().trim();
         
         console.log('Filtering flashcards:', {
           urlTopic: topic,
           decodedTopic,
-          originalTopic,
+          normalizedUrlTopic,
           cardTopic: card.topic,
-          exactMatch: card.topic === originalTopic
+          normalizedCardTopic,
+          exactMatch: normalizedCardTopic === normalizedUrlTopic
         });
         
-        // Only include cards that exactly match the topic
-        return card.topic === originalTopic;
+        // Only include cards that exactly match the normalized topic
+        return normalizedCardTopic === normalizedUrlTopic;
       })
     : allFlashcards;
   
@@ -147,9 +147,7 @@ const LearnMode = () => {
   // Show message if no flashcards found for specific topic
   if (topic && flashcards.length === 0) {
     const decodedTopic = decodeURIComponent(topic);
-    const topicDisplayName = decodedTopic.split('-').map(word => 
-      word.charAt(0).toUpperCase() + word.slice(1)
-    ).join(' ');
+    const topicDisplayName = decodedTopic.replace(/-/g, ' ');
 
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -181,9 +179,7 @@ const LearnMode = () => {
   const topicDisplayName = flashcards.length > 0 
     ? flashcards[0].topic 
     : topic 
-      ? decodeURIComponent(topic).split('-').map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1)
-        ).join(' ')
+      ? decodeURIComponent(topic).replace(/-/g, ' ')
       : 'Mixed Topics';
 
   const handleNext = async () => {
