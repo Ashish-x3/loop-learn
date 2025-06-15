@@ -21,13 +21,13 @@ export const useTheme = () => {
   return context;
 };
 
-const accentColorMap: Record<AccentColor, string> = {
-  blue: '#3b82f6',
-  purple: '#8b5cf6',
-  green: '#10b981',
-  orange: '#f97316',
-  pink: '#ec4899',
-  red: '#ef4444'
+const accentColorMap: Record<AccentColor, { hex: string; hsl: string }> = {
+  blue: { hex: '#3b82f6', hsl: '217 91% 60%' },
+  purple: { hex: '#8b5cf6', hsl: '262 83% 58%' },
+  green: { hex: '#10b981', hsl: '158 64% 52%' },
+  orange: { hex: '#f97316', hsl: '20 90% 48%' },
+  pink: { hex: '#ec4899', hsl: '322 65% 54%' },
+  red: { hex: '#ef4444', hsl: '0 84% 60%' }
 };
 
 export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -54,9 +54,14 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
   }, [isDark]);
 
   useEffect(() => {
-    const color = accentColorMap[accentColor];
-    console.log('Applying accent color:', accentColor, color);
-    document.documentElement.style.setProperty('--accent-color', color);
+    const colorConfig = accentColorMap[accentColor];
+    console.log('Applying accent color:', accentColor, colorConfig);
+    
+    // Set both hex and HSL versions for different use cases
+    document.documentElement.style.setProperty('--accent-color', colorConfig.hex);
+    document.documentElement.style.setProperty('--primary', colorConfig.hsl);
+    document.documentElement.style.setProperty('--ring', colorConfig.hsl);
+    
     localStorage.setItem('accent-color', accentColor);
   }, [accentColor]);
 
