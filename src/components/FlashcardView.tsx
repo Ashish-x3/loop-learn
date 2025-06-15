@@ -1,5 +1,4 @@
-
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
@@ -31,6 +30,12 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
   const [isFlipped, setIsFlipped] = useState(false);
   const [activeTab, setActiveTab] = useState('definition');
 
+  // Reset flip state when flashcard changes
+  useEffect(() => {
+    setIsFlipped(false);
+    setActiveTab('definition');
+  }, [flashcard.id]);
+
   const handleFlip = () => {
     setIsFlipped(!isFlipped);
     if (!isFlipped) {
@@ -41,6 +46,20 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
   const handleReset = () => {
     setIsFlipped(false);
     setActiveTab('definition');
+  };
+
+  const handleNext = () => {
+    if (onNext) {
+      onNext();
+      // The useEffect will handle resetting the flip state
+    }
+  };
+
+  const handlePrevious = () => {
+    if (onPrevious) {
+      onPrevious();
+      // The useEffect will handle resetting the flip state
+    }
   };
 
   return (
@@ -197,7 +216,7 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
             <div className="flex space-x-3">
               <Button
                 variant="outline"
-                onClick={onPrevious}
+                onClick={handlePrevious}
                 className="flex-1 flex items-center justify-center space-x-2 py-3"
                 disabled={!onPrevious}
               >
@@ -207,7 +226,7 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
               
               <Button
                 variant="outline"
-                onClick={onNext}
+                onClick={handleNext}
                 className="flex-1 flex items-center justify-center space-x-2 py-3"
                 disabled={!onNext}
               >
@@ -241,7 +260,7 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
 
             <Button
               variant="outline"
-              onClick={onNext}
+              onClick={handleNext}
               className="flex items-center space-x-2"
               disabled={!onNext}
             >
