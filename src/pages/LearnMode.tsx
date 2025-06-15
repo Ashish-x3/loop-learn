@@ -11,49 +11,37 @@ import { useFlashcards } from '@/hooks/useFlashcards';
 import { supabase } from '@/integrations/supabase/client';
 
 const LearnMode = () => {
-  const { topic } = useParams();
+  const { topic: urlTopic } = useParams();
   const navigate = useNavigate();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
   const [completedCards, setCompletedCards] = useState<number[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
+  const [selectedTopic, setSelectedTopic] = useState<string | undefined>(
+    urlTopic ? decodeURIComponent(urlTopic) : undefined
+  );
 
   // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
+  // --- Build topic list from user cards ---
+  const uniqueTopics: string[] = Array.from(
+    new Set(allFlashcards.map(card => card.topic))
+  );
+
+  // --- Choose effective topic selection:
+  // (1) URL wins (if present and valid), (2) else selectedTopic, (3) else first topic available
+  const actualTopic = urlTopic
+    ? decodeURIComponent(urlTopic.replace(/-/g, ' '))
+    : selectedTopic ?? uniqueTopics[0];
+
   // Filter flashcards by exact topic match with strict comparison
-  const flashcards = topic 
-    ? allFlashcards.filter(card => {
-        // Decode the URL topic parameter
-        const decodedTopic = decodeURIComponent(topic);
-        
-        // Convert URL slug back to original format: "css-grid" -> "CSS Grid"
-        const urlTopicWords = decodedTopic.split('-');
-        const reconstructedTopic = urlTopicWords.map(word => 
-          word.charAt(0).toUpperCase() + word.slice(1).toLowerCase()
-        ).join(' ');
-        
-        // Also try exact case-insensitive match for edge cases
-        const exactCaseInsensitiveMatch = card.topic.toLowerCase() === decodedTopic.replace(/-/g, ' ').toLowerCase();
-        const reconstructedMatch = card.topic === reconstructedTopic;
-        
-        console.log('Filtering flashcards:', {
-          urlTopic: topic,
-          decodedTopic,
-          reconstructedTopic,
-          cardTopic: card.topic,
-          exactCaseInsensitiveMatch,
-          reconstructedMatch,
-          finalMatch: exactCaseInsensitiveMatch || reconstructedMatch
-        });
-        
-        // Only include cards that exactly match
-        return exactCaseInsensitiveMatch || reconstructedMatch;
-      })
-    : allFlashcards;
+  const flashcards = allFlashcards.filter(card =>
+    card.topic.toLowerCase() === actualTopic?.toLowerCase()
+  );
   
-  console.log('Topic from URL:', topic);
+  console.log('Topic from URL:', urlTopic);
   console.log('All available topics:', [...new Set(allFlashcards.map(f => f.topic))]);
   console.log('Filtered flashcards count:', flashcards.length);
   console.log('Filtered flashcards topics:', [...new Set(flashcards.map(f => f.topic))]);
@@ -62,7 +50,12 @@ const LearnMode = () => {
   useEffect(() => {
     setCurrentCardIndex(0);
     setCompletedCards([]);
-  }, [topic]);
+  }, [actualTopic]);
+
+  // If the url param changes (user navigates by chip), keep the chip selection in sync:
+  useEffect(() => {
+    if (urlTopic) setSelectedTopic(decodeURIComponent(urlTopic));
+  }, [urlTopic]);
 
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
@@ -151,21 +144,56 @@ const LearnMode = () => {
     );
   }
 
-  // Show message if no flashcards found for specific topic
-  if (topic && flashcards.length === 0) {
-    const decodedTopic = decodeURIComponent(topic);
-    const topicDisplayName = decodedTopic.replace(/-/g, ' ');
+  // --- If no topic found but user has cards, prompt topic selection ---
+  if (!actualTopic && uniqueTopics.length) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center">
+          <h2 className="text-xl font-bold mb-4">Pick a topic to start learning</h2>
+          <div className="flex flex-wrap gap-2 justify-center mb-4">
+            {uniqueTopics.map(topic => (
+              <Button
+                key={topic}
+                variant="outline"
+                className="capitalize"
+                onClick={() => setSelectedTopic(topic)}
+              >
+                {topic}
+              </Button>
+            ))}
+          </div>
+          <Link to="/dashboard">
+            <Button variant="link" className="mt-4">Back to Dashboard</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
+  // Show message if no flashcards found for specific topic
+  if (!flashcards.length) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h2 className="text-2xl font-bold">No flashcards found</h2>
           <p className="text-muted-foreground">
-            No flashcards found for topic: <strong>{topicDisplayName}</strong>
+            No flashcards found for topic: <strong>{actualTopic}</strong>
           </p>
-          <p className="text-sm text-muted-foreground">
-            Available topics: {[...new Set(allFlashcards.map(f => f.topic))].join(', ')}
-          </p>
+          <div className="flex flex-wrap gap-2 justify-center mb-2">
+            {uniqueTopics.map(topic => (
+              <Button
+                key={topic}
+                variant="ghost"
+                className="capitalize"
+                onClick={() => {
+                  setSelectedTopic(topic);
+                  navigate(`/learn/${encodeURIComponent(topic.toLowerCase().replace(/\s+/g, '-'))}`);
+                }}
+              >
+                {topic}
+              </Button>
+            ))}
+          </div>
           <div className="flex gap-3 justify-center">
             <Link to="/create">
               <Button>Create Flashcards</Button>
@@ -182,12 +210,14 @@ const LearnMode = () => {
   const currentCard = flashcards[currentCardIndex];
   const progress = flashcards.length > 0 ? ((currentCardIndex + 1) / flashcards.length) * 100 : 0;
 
-  // Get the actual topic name from the first flashcard for display
-  const topicDisplayName = flashcards.length > 0 
-    ? flashcards[0].topic 
-    : topic 
-      ? decodeURIComponent(topic).replace(/-/g, ' ')
-      : 'Mixed Topics';
+  // Slugify utility for URL navigation
+  const slugify = (topic: string) =>
+    encodeURIComponent(topic.toLowerCase().replace(/\s+/g, '-'));
+
+  const handleTopicClick = (topic: string) => {
+    setSelectedTopic(topic);
+    navigate(`/learn/${slugify(topic)}`);
+  };
 
   const handleNext = async () => {
     if (currentCard && !completedCards.includes(currentCard.id)) {
@@ -246,7 +276,7 @@ const LearnMode = () => {
             
             {/* Center - Title and progress */}
             <div className="flex-1 text-center">
-              <h1 className="text-lg font-semibold">{topicDisplayName}</h1>
+              <h1 className="text-lg font-semibold capitalize">{actualTopic}</h1>
               <p className="text-sm text-muted-foreground">
                 {currentCardIndex + 1} of {flashcards.length}
               </p>
@@ -275,16 +305,30 @@ const LearnMode = () => {
           </div>
         </div>
 
+        {/* Topic Chip Selector */}
+        <div className="flex flex-wrap gap-2 justify-center my-4">
+          {uniqueTopics.map(topic => (
+            <Button
+              key={topic}
+              variant={actualTopic === topic ? 'default' : 'ghost'}
+              className="capitalize"
+              onClick={() => handleTopicClick(topic)}
+            >
+              {topic}
+            </Button>
+          ))}
+        </div>
+
         {/* Topic Badge */}
         <div className="flex justify-center">
           <Badge className="bg-primary/20 text-primary border-primary/30">
-            Learning: {topicDisplayName}
+            Learning: {actualTopic}
           </Badge>
         </div>
 
         {/* Debug info */}
         <div className="text-xs text-muted-foreground text-center">
-          Topic: {topicDisplayName} | Cards: {flashcards.length} | Current: {currentCard?.topic}
+          Topic: {actualTopic} | Cards: {flashcards.length} | Current: {currentCard?.topic}
         </div>
 
         {/* Flashcard */}
@@ -304,12 +348,12 @@ const LearnMode = () => {
             <CardHeader className="text-center pb-2 sm:pb-4">
               <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">🎉</div>
               <CardTitle className="text-green-800 dark:text-green-200 text-lg sm:text-xl">
-                {topicDisplayName} Mastered!
+                {actualTopic} Mastered!
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-3 sm:space-y-4 pt-0">
               <p className="text-green-700 dark:text-green-300 text-sm sm:text-base">
-                You've completed all {topicDisplayName} flashcards!
+                You've completed all {actualTopic} flashcards!
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
                 <Button onClick={handleRestart} variant="outline" size="sm" className="text-sm">
