@@ -22,23 +22,23 @@ const FloatingDock = () => {
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="fixed bottom-4 left-1/2 transform -translate-x-1/2 z-50 px-3">
-      <div className="relative backdrop-blur-xl bg-white/90 dark:bg-black/80 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-3xl p-3 md:p-4 max-w-[400px] overflow-x-auto">
+    <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50 px-3">
+      <div className="relative backdrop-blur-xl bg-white/90 dark:bg-black/80 border border-white/30 dark:border-white/20 shadow-2xl shadow-black/20 dark:shadow-black/50 rounded-3xl p-4 md:p-5 overflow-x-auto md:overflow-visible">
         {/* Enhanced glassmorphic background */}
         <div className="absolute inset-0 bg-gradient-to-t from-white/10 to-white/20 dark:from-black/10 dark:to-black/20 rounded-3xl" />
         
-        <div className="relative flex items-end justify-center gap-2 md:gap-3 px-2">
+        <div className="relative flex items-end justify-center gap-3 md:gap-4 px-2">
           {dockItems.map((item, index) => {
             const Icon = item.icon;
             const active = isActive(item.path);
             const isHovered = hoveredIndex === index;
             
-            // Enhanced scale factors for better mobile experience
+            // Enhanced scale factors for better desktop experience
             let scale = 1;
             if (hoveredIndex !== null && window.innerWidth >= 768) {
               const distance = Math.abs(index - hoveredIndex);
-              if (distance === 0) scale = 1.2;
-              else if (distance === 1) scale = 1.1;
+              if (distance === 0) scale = 1.3;
+              else if (distance === 1) scale = 1.15;
             }
 
             return (
@@ -49,8 +49,8 @@ const FloatingDock = () => {
                 onMouseLeave={() => setHoveredIndex(null)}
                 style={{
                   zIndex: isHovered ? 10 : 1,
-                  minWidth: '44px',
-                  minHeight: '56px'
+                  minWidth: '52px',
+                  minHeight: '64px'
                 }}
               >
                 {/* Enhanced Tooltip */}
@@ -69,10 +69,10 @@ const FloatingDock = () => {
                     size="icon"
                     className={cn(
                       "relative rounded-2xl transition-all duration-300 ease-out border-0 hover:bg-transparent touch-manipulation active:scale-90",
-                      "w-10 h-10 sm:w-11 sm:h-11 md:w-12 md:h-12 flex items-center justify-center"
+                      "w-12 h-12 sm:w-13 sm:h-13 md:w-14 md:h-14 flex items-center justify-center"
                     )}
                     style={{
-                      transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 8) : 0}px)`,
+                      transform: `scale(${scale}) translateY(${scale > 1 ? -((scale - 1) * 10) : 0}px)`,
                       transformOrigin: 'bottom center'
                     }}
                   >
@@ -86,13 +86,13 @@ const FloatingDock = () => {
                     
                     <Icon className={cn(
                       "relative z-10 transition-colors duration-300",
-                      "w-5 h-5 sm:w-5 sm:h-5 md:w-6 md:h-6",
+                      "w-6 h-6 sm:w-6 sm:h-6 md:w-7 md:h-7",
                       active ? "text-white" : "text-black dark:text-white"
                     )} />
                     
                     {/* Enhanced active indicator */}
                     {active && (
-                      <div className="absolute -bottom-1 w-1.5 h-1.5 bg-white rounded-full shadow-lg" />
+                      <div className="absolute -bottom-1 w-2 h-2 bg-white rounded-full shadow-lg" />
                     )}
                   </Button>
                 </Link>

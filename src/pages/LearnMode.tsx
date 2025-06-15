@@ -164,38 +164,6 @@ const LearnMode = () => {
           />
         </div>
 
-        {/* Mobile Navigation Buttons - More prominent */}
-        <div className="fixed bottom-24 left-0 right-0 px-4 z-30">
-          <div className="bg-background/95 backdrop-blur border rounded-2xl p-3 shadow-lg">
-            <div className="flex items-center justify-between gap-4">
-              <Button
-                variant="outline"
-                onClick={handlePrevious}
-                disabled={currentCardIndex === 0}
-                className="flex-1 h-12 text-base font-medium"
-              >
-                Previous
-              </Button>
-              
-              <Button
-                variant="outline"
-                onClick={handleRestart}
-                className="h-12 px-4"
-              >
-                <RotateCcw className="w-4 h-4" />
-              </Button>
-
-              <Button
-                onClick={handleNext}
-                disabled={currentCardIndex >= sampleFlashcards.length - 1}
-                className="flex-1 h-12 text-base font-medium"
-              >
-                Next
-              </Button>
-            </div>
-          </div>
-        </div>
-
         {/* Completion Message */}
         {currentCardIndex === sampleFlashcards.length - 1 && completedCards.includes(currentCard.id) && (
           <Card className="border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800">
