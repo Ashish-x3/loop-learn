@@ -23,33 +23,35 @@ const LearnMode = () => {
   // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // Filter flashcards by exact topic match (case-insensitive)
+  // Filter flashcards by topic - handle both URL format and exact match
   const flashcards = topic 
     ? allFlashcards.filter(card => {
-        const cardTopic = card.topic.toLowerCase().replace(/\s+/g, '-');
-        const urlTopic = topic.toLowerCase();
-        console.log('Filtering:', { cardTopic, urlTopic, match: cardTopic === urlTopic });
-        return cardTopic === urlTopic;
+        // Normalize both the card topic and URL topic for comparison
+        const normalizedCardTopic = card.topic.toLowerCase().replace(/\s+/g, '-');
+        const normalizedUrlTopic = decodeURIComponent(topic).toLowerCase().replace(/\s+/g, '-');
+        
+        console.log('Filtering comparison:', { 
+          cardTopic: card.topic, 
+          normalizedCardTopic, 
+          urlTopic: topic, 
+          normalizedUrlTopic,
+          match: normalizedCardTopic === normalizedUrlTopic 
+        });
+        
+        return normalizedCardTopic === normalizedUrlTopic;
       })
     : allFlashcards;
   
   console.log('Topic from URL:', topic);
-  console.log('All flashcards:', allFlashcards.map(f => ({ topic: f.topic, category: f.category })));
-  console.log('Filtered flashcards:', flashcards.map(f => ({ topic: f.topic, category: f.category })));
+  console.log('Decoded topic:', topic ? decodeURIComponent(topic) : 'none');
+  console.log('All flashcards topics:', allFlashcards.map(f => f.topic));
+  console.log('Filtered flashcards:', flashcards.map(f => f.topic));
 
   // Reset state when topic changes
   useEffect(() => {
     setCurrentCardIndex(0);
     setCompletedCards([]);
   }, [topic]);
-
-  // Redirect if no flashcards found for topic
-  useEffect(() => {
-    if (!isLoading && topic && flashcards.length === 0) {
-      console.log('No flashcards found for topic:', topic);
-      console.log('Available flashcards:', allFlashcards.map(f => ({ topic: f.topic, category: f.category })));
-    }
-  }, [topic, flashcards, allFlashcards, isLoading]);
 
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
@@ -63,7 +65,7 @@ const LearnMode = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (!user) return;
 
-      console.log('Updating progress for flashcard:', flashcardId);
+      console.log('Updating progress for flashcard:', flashcardId, 'completed:', isCompleted);
 
       // Check if progress record exists
       const { data: existingProgress } = await supabase
@@ -71,7 +73,7 @@ const LearnMode = () => {
         .select('*')
         .eq('user_id', user.id)
         .eq('flashcard_id', flashcardId)
-        .single();
+        .maybeSingle();
 
       if (existingProgress) {
         // Update existing progress
@@ -87,7 +89,7 @@ const LearnMode = () => {
         if (error) {
           console.error('Error updating progress:', error);
         } else {
-          console.log('Progress updated successfully');
+          console.log('Progress updated successfully for card:', flashcardId);
         }
       } else {
         // Create new progress record
@@ -104,7 +106,7 @@ const LearnMode = () => {
         if (error) {
           console.error('Error creating progress:', error);
         } else {
-          console.log('Progress created successfully');
+          console.log('Progress created successfully for card:', flashcardId);
         }
       }
     } catch (error) {
@@ -140,12 +142,16 @@ const LearnMode = () => {
 
   // Show message if no flashcards found for specific topic
   if (topic && flashcards.length === 0) {
+    const topicDisplayName = decodeURIComponent(topic).split('-').map(word => 
+      word.charAt(0).toUpperCase() + word.slice(1)
+    ).join(' ');
+
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
           <h2 className="text-2xl font-bold">No flashcards found</h2>
           <p className="text-muted-foreground">
-            No flashcards found for topic: <strong>{topic}</strong>
+            No flashcards found for topic: <strong>{topicDisplayName}</strong>
           </p>
           <p className="text-sm text-muted-foreground">
             Try generating some flashcards for this topic first.
@@ -166,9 +172,14 @@ const LearnMode = () => {
   const currentCard = flashcards[currentCardIndex];
   const progress = flashcards.length > 0 ? ((currentCardIndex + 1) / flashcards.length) * 100 : 0;
 
-  const topicDisplayName = topic ? topic.split('-').map(word => 
-    word.charAt(0).toUpperCase() + word.slice(1)
-  ).join(' ') : 'Mixed Topics';
+  // Get the actual topic name from the first flashcard for display
+  const topicDisplayName = flashcards.length > 0 
+    ? flashcards[0].topic 
+    : topic 
+      ? decodeURIComponent(topic).split('-').map(word => 
+          word.charAt(0).toUpperCase() + word.slice(1)
+        ).join(' ')
+      : 'Mixed Topics';
 
   const handleNext = async () => {
     if (currentCard && !completedCards.includes(currentCard.id)) {
@@ -257,13 +268,11 @@ const LearnMode = () => {
         </div>
 
         {/* Topic Badge */}
-        {topic && (
-          <div className="flex justify-center">
-            <Badge className="bg-primary/20 text-primary border-primary/30">
-              Learning: {topicDisplayName}
-            </Badge>
-          </div>
-        )}
+        <div className="flex justify-center">
+          <Badge className="bg-primary/20 text-primary border-primary/30">
+            Learning: {topicDisplayName}
+          </Badge>
+        </div>
 
         {/* Flashcard */}
         <div className="px-1 sm:px-0">
@@ -282,15 +291,12 @@ const LearnMode = () => {
             <CardHeader className="text-center pb-2 sm:pb-4">
               <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">🎉</div>
               <CardTitle className="text-green-800 dark:text-green-200 text-lg sm:text-xl">
-                {topic ? `${topicDisplayName} Mastered!` : 'Great Job!'}
+                {topicDisplayName} Mastered!
               </CardTitle>
             </CardHeader>
             <CardContent className="text-center space-y-3 sm:space-y-4 pt-0">
               <p className="text-green-700 dark:text-green-300 text-sm sm:text-base">
-                {topic 
-                  ? `You've completed all ${topicDisplayName} flashcards!`
-                  : "You've completed this learning session!"
-                }
+                You've completed all {topicDisplayName} flashcards!
               </p>
               <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
                 <Button onClick={handleRestart} variant="outline" size="sm" className="text-sm">

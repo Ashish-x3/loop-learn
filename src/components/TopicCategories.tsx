@@ -45,6 +45,11 @@ const TopicCategories = () => {
     return colorMap[category] || 'from-gray-500 to-slate-600';
   };
 
+  // Function to create URL-safe topic slug
+  const createTopicSlug = (topic: string) => {
+    return encodeURIComponent(topic.toLowerCase().replace(/\s+/g, '-'));
+  };
+
   if (isLoading) {
     return (
       <div className="space-y-4">
@@ -135,19 +140,24 @@ const TopicCategories = () => {
                       Available Topics
                     </h4>
                     <div className="grid gap-2">
-                      {categoryData.topics.map((topic) => (
-                        <Link key={topic} to={`/learn/${topic}`}>
-                          <Button 
-                            variant="ghost" 
-                            className="w-full justify-start h-auto p-3 text-left hover:bg-primary/5"
-                          >
-                            <div>
-                              <div className="font-medium capitalize">{topic.replace(/-/g, ' ')}</div>
-                              <div className="text-xs text-muted-foreground">Start learning</div>
-                            </div>
-                          </Button>
-                        </Link>
-                      ))}
+                      {categoryData.topics.map((topic) => {
+                        const topicSlug = createTopicSlug(topic);
+                        console.log('Creating link for topic:', topic, 'slug:', topicSlug);
+                        
+                        return (
+                          <Link key={topic} to={`/learn/${topicSlug}`}>
+                            <Button 
+                              variant="ghost" 
+                              className="w-full justify-start h-auto p-3 text-left hover:bg-primary/5"
+                            >
+                              <div>
+                                <div className="font-medium">{topic}</div>
+                                <div className="text-xs text-muted-foreground">Start learning</div>
+                              </div>
+                            </Button>
+                          </Link>
+                        );
+                      })}
                     </div>
                   </div>
                 </CardContent>
