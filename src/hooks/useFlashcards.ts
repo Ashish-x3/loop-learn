@@ -13,19 +13,41 @@ export interface Flashcard {
 }
 
 // Transform Supabase flashcard to match FlashcardView expectations
-const transformFlashcard = (card: Flashcard) => ({
-  id: parseInt(card.id.slice(-8), 16), // Convert string ID to number for compatibility
-  topic: card.topic,
-  category: card.topic, // Use topic as category
-  difficulty: card.difficulty as "Beginner" | "Intermediate" | "Advanced",
-  front: card.question,
-  back: {
-    definition: card.answer,
+const transformFlashcard = (card: Flashcard) => {
+  let backContent = {
+    definition: "",
     analogy: "",
     realWorldUse: "",
-    codeExample: ""
+    codeExample: "",
+  };
+
+  try {
+    const parsedAnswer = JSON.parse(card.answer);
+    if (typeof parsedAnswer === 'object' && parsedAnswer !== null) {
+      backContent = {
+        definition: parsedAnswer.definition || "",
+        analogy: parsedAnswer.analogy || "",
+        realWorldUse: parsedAnswer.realWorldUse || "",
+        codeExample: parsedAnswer.codeExample || "",
+      };
+    } else {
+      // Fallback for old format or if answer is not an object
+      backContent.definition = card.answer;
+    }
+  } catch (error) {
+    // Fallback for old format (answer is just a string) or invalid JSON
+    backContent.definition = card.answer;
   }
-});
+
+  return {
+    id: parseInt(card.id.slice(-8), 16), // Convert string ID to number for compatibility
+    topic: card.topic,
+    category: card.topic, // Use topic as category
+    difficulty: card.difficulty as "Beginner" | "Intermediate" | "Advanced",
+    front: card.question,
+    back: backContent,
+  };
+};
 
 export const useFlashcards = (topic?: string) => {
   return useQuery({

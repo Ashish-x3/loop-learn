@@ -26,7 +26,7 @@ const Create = () => {
 
   const quickTopics = [
     "JavaScript Closures",
-    "React Hooks", 
+    "React Hooks",
     "CSS Grid",
     "Git Branches",
     "API Requests",
@@ -65,6 +65,23 @@ const Create = () => {
     }
   };
 
+  const renderAnswer = (answer: string) => {
+    try {
+      const parsed = JSON.parse(answer);
+      if (typeof parsed === 'object' && parsed !== null && parsed.definition) {
+        return (
+          <div className="space-y-1 text-xs text-muted-foreground">
+            {parsed.definition && <p><strong>Def:</strong> {parsed.definition}</p>}
+            {parsed.analogy && <p><strong>Analogy:</strong> {parsed.analogy}</p>}
+          </div>
+        );
+      }
+      return <div className="text-sm text-muted-foreground line-clamp-3">{answer}</div>;
+    } catch (e) {
+      return <div className="text-sm text-muted-foreground line-clamp-3">{answer}</div>;
+    }
+  };
+
   return (
     <div className="min-h-screen bg-background">
       <ThemeToggle />
@@ -90,7 +107,6 @@ const Create = () => {
         </div>
       </div>
       <div className="container mx-auto px-4 sm:px-6 py-6 sm:py-8 pb-24 sm:pb-32">
-        {/* Main AI Generator */}
         <div className="max-w-4xl mx-auto space-y-8">
           {/* Hero Section */}
           <div className="text-center space-y-6">
@@ -127,8 +143,8 @@ const Create = () => {
                   className="flex-1 text-base p-4 h-12"
                   disabled={isLoading}
                 />
-                <Button 
-                  disabled={!topic.trim() || isLoading} 
+                <Button
+                  disabled={!topic.trim() || isLoading}
                   className="h-12 px-6 bg-primary hover:bg-primary/90 text-primary-foreground border-0 backdrop-blur-sm"
                   onClick={handleGenerate}
                 >
@@ -166,7 +182,7 @@ const Create = () => {
                         <CardContent className="p-4">
                           <span className="block font-medium mb-1">{card.difficulty ?? "Beginner"}</span>
                           <div className="mb-2 font-semibold">{card.question}</div>
-                          <div className="text-sm text-muted-foreground">{card.answer}</div>
+                          {renderAnswer(card.answer)}
                         </CardContent>
                       </Card>
                     ))}
