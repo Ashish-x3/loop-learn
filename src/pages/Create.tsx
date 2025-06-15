@@ -49,9 +49,30 @@ const Create = () => {
     setFlashcards([]);
 
     try {
-      // Use the corrected edge function that expects an array of topics
+      // First, search for existing flashcards that match the topic
+      const { data: existingCards, error: searchError } = await supabase
+        .from('flashcards')
+        .select('*')
+        .ilike('topic', `%${topic.toLowerCase()}%`)
+        .order('created_at', { ascending: false });
+
+      if (searchError) {
+        console.error('Search error:', searchError);
+      }
+
+      if (existingCards && existingCards.length > 0) {
+        setFlashcards(existingCards);
+        toast({
+          title: "Found existing flashcards!",
+          description: `Found ${existingCards.length} flashcards for "${topic}"`
+        });
+        setIsLoading(false);
+        return;
+      }
+
+      // If no existing cards found, generate new ones
       const response = await supabase.functions.invoke('generate-gemini-flashcards', {
-        body: { topics: [topic.trim()] } // Convert single topic to array
+        body: { topics: [topic.trim()] }
       });
 
       if (response.error) {
@@ -129,7 +150,7 @@ const Create = () => {
               <div>
                 <h1 className="text-xl sm:text-2xl font-bold">Create Flashcard</h1>
                 <p className="text-xs sm:text-sm text-muted-foreground mt-1">
-                  Generate AI-powered flashcards for any tech topic
+                  Search for existing flashcards or generate new AI-powered ones
                 </p>
               </div>
             </div>
@@ -146,9 +167,9 @@ const Create = () => {
               </div>
             </div>
             <div className="space-y-4">
-              <h2 className="text-3xl sm:text-4xl font-bold">AI Flashcard Generator</h2>
+              <h2 className="text-3xl sm:text-4xl font-bold">Find or Generate Flashcards</h2>
               <p className="text-lg text-muted-foreground max-w-2xl mx-auto">
-                Transform any programming concept into easy-to-understand flashcards with kid-friendly explanations, analogies, and code examples.
+                Search for existing flashcards first, or create new ones with AI if none exist for your topic.
               </p>
             </div>
           </div>
@@ -160,14 +181,14 @@ const Create = () => {
                 What do you want to learn?
               </CardTitle>
               <CardDescription className="text-base">
-                Enter any programming concept, technology, or software development topic
+                Enter any topic - we'll find existing flashcards or create new ones
               </CardDescription>
             </CardHeader>
             <CardContent className="space-y-6 p-6 sm:p-8 pt-0">
               {/* Main Input */}
               <div className="flex flex-col sm:flex-row space-y-3 sm:space-y-0 sm:space-x-3">
                 <Input
-                  placeholder="e.g., JavaScript Closures, React Context, Database Indexing..."
+                  placeholder="e.g., react, javascript, css..."
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   onKeyPress={(e) => e.key === 'Enter' && handleGenerate()}
@@ -180,14 +201,14 @@ const Create = () => {
                   onClick={handleGenerate}
                 >
                   {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Plus className="w-5 h-5 mr-2" />}
-                  {isLoading ? "Generating..." : "Generate Flashcard"}
+                  {isLoading ? "Searching..." : "Find/Generate"}
                 </Button>
               </div>
               {/* Quick Suggestions */}
               <div className="space-y-4">
                 <div className="flex items-center gap-2">
                   <span className="text-sm font-medium">Popular topics:</span>
-                  <Badge variant="secondary" className="text-xs">AI-Generated</Badge>
+                  <Badge variant="secondary" className="text-xs">Try these</Badge>
                 </div>
                 <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
                   {quickTopics.map((quickTopic, index) => (
@@ -224,19 +245,19 @@ const Create = () => {
               {/* Features */}
               <div className="grid md:grid-cols-3 gap-4 pt-4">
                 <div className="text-center space-y-2">
+                  <div className="text-2xl">🔍</div>
+                  <h4 className="font-semibold text-sm">Smart Search</h4>
+                  <p className="text-xs text-muted-foreground">Finds existing flashcards first</p>
+                </div>
+                <div className="text-center space-y-2">
                   <div className="text-2xl">🧠</div>
-                  <h4 className="font-semibold text-sm">Simple Explanations</h4>
-                  <p className="text-xs text-muted-foreground">Complex concepts made easy to understand</p>
+                  <h4 className="font-semibold text-sm">AI Generation</h4>
+                  <p className="text-xs text-muted-foreground">Creates new ones if needed</p>
                 </div>
                 <div className="text-center space-y-2">
-                  <div className="text-2xl">🎯</div>
-                  <h4 className="font-semibold text-sm">Real Analogies</h4>
-                  <p className="text-xs text-muted-foreground">Relatable comparisons that stick</p>
-                </div>
-                <div className="text-center space-y-2">
-                  <div className="text-2xl">💻</div>
-                  <h4 className="font-semibold text-sm">Code Examples</h4>
-                  <p className="text-xs text-muted-foreground">Practical examples you can try</p>
+                  <div className="text-2xl">⚡</div>
+                  <h4 className="font-semibold text-sm">Instant Results</h4>
+                  <p className="text-xs text-muted-foreground">Fast and efficient learning</p>
                 </div>
               </div>
             </CardContent>
@@ -250,21 +271,21 @@ const Create = () => {
                   <span className="text-primary font-bold">1</span>
                 </div>
                 <h4 className="font-semibold">Enter a Topic</h4>
-                <p className="text-sm text-muted-foreground">Type any programming concept you want to learn</p>
+                <p className="text-sm text-muted-foreground">Type any topic like "react" or "javascript"</p>
               </div>
               <div className="space-y-3">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                   <span className="text-primary font-bold">2</span>
                 </div>
-                <h4 className="font-semibold">AI Creates Flashcard</h4>
-                <p className="text-sm text-muted-foreground">Our AI generates kid-friendly explanations and examples</p>
+                <h4 className="font-semibold">Smart Search</h4>
+                <p className="text-sm text-muted-foreground">We find existing flashcards or create new ones</p>
               </div>
               <div className="space-y-3">
                 <div className="w-12 h-12 bg-primary/10 rounded-full flex items-center justify-center mx-auto">
                   <span className="text-primary font-bold">3</span>
                 </div>
                 <h4 className="font-semibold">Start Learning</h4>
-                <p className="text-sm text-muted-foreground">Study your new flashcard and master the concept</p>
+                <p className="text-sm text-muted-foreground">Get all relevant flashcards instantly</p>
               </div>
             </div>
           </div>
