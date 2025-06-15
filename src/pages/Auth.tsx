@@ -60,11 +60,13 @@ const Auth = () => {
     if (error) {
       if (error.message.includes('already registered')) {
         setError('This email is already registered. Please try signing in instead.');
+      } else if (error.message.includes('Email not confirmed')) {
+        setSuccess('Please check your email and confirm your account before signing in.');
       } else {
         setError(error.message);
       }
     } else {
-      setSuccess('Account created successfully! Please check your email to verify your account.');
+      setSuccess('Account created successfully! You can now sign in.');
     }
 
     setIsLoading(false);
@@ -74,6 +76,7 @@ const Auth = () => {
     e.preventDefault();
     setIsLoading(true);
     setError(null);
+    setSuccess(null);
 
     const formData = new FormData(e.currentTarget);
     const email = formData.get('email') as string;
@@ -84,9 +87,14 @@ const Auth = () => {
     if (error) {
       if (error.message.includes('Invalid login credentials')) {
         setError('Invalid email or password. Please check your credentials and try again.');
+      } else if (error.message.includes('Email not confirmed')) {
+        setError('Please check your email and confirm your account before signing in.');
       } else {
         setError(error.message);
       }
+    } else {
+      // Success - user will be redirected by the useEffect above
+      navigate('/dashboard');
     }
 
     setIsLoading(false);
@@ -127,6 +135,7 @@ const Auth = () => {
                       placeholder="Enter your email"
                       required
                       disabled={isLoading}
+                      autoComplete="email"
                     />
                   </div>
                   <div className="space-y-2">
@@ -138,11 +147,17 @@ const Auth = () => {
                       placeholder="Enter your password"
                       required
                       disabled={isLoading}
+                      autoComplete="current-password"
                     />
                   </div>
                   {error && (
                     <Alert variant="destructive">
                       <AlertDescription>{error}</AlertDescription>
+                    </Alert>
+                  )}
+                  {success && (
+                    <Alert>
+                      <AlertDescription>{success}</AlertDescription>
                     </Alert>
                   )}
                   <Button type="submit" className="w-full" disabled={isLoading}>
@@ -178,6 +193,7 @@ const Auth = () => {
                       required
                       disabled={isLoading}
                       minLength={3}
+                      autoComplete="username"
                     />
                   </div>
                   <div className="space-y-2">
@@ -189,6 +205,7 @@ const Auth = () => {
                       placeholder="Enter your email"
                       required
                       disabled={isLoading}
+                      autoComplete="email"
                     />
                   </div>
                   <div className="space-y-2">
@@ -201,6 +218,7 @@ const Auth = () => {
                       required
                       disabled={isLoading}
                       minLength={6}
+                      autoComplete="new-password"
                     />
                   </div>
                   <div className="space-y-2">
@@ -213,6 +231,7 @@ const Auth = () => {
                       required
                       disabled={isLoading}
                       minLength={6}
+                      autoComplete="new-password"
                     />
                   </div>
                   {error && (
