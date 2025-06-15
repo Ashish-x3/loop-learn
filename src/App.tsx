@@ -8,7 +8,6 @@ import { ThemeProvider } from "@/contexts/ThemeContext";
 import Index from "./pages/Index";
 import Dashboard from "./pages/Dashboard";
 import LearnMode from "./pages/LearnMode";
-import Achievements from "./pages/Achievements";
 import Create from "./pages/Create";
 import Profile from "./pages/Profile";
 import SavedFlashcards from "./pages/SavedFlashcards";
@@ -27,7 +26,6 @@ const App = () => (
             <Route path="/" element={<Index />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/learn" element={<LearnMode />} />
-            <Route path="/achievements" element={<Achievements />} />
             <Route path="/create" element={<Create />} />
             <Route path="/profile" element={<Profile />} />
             <Route path="/saved" element={<SavedFlashcards />} />
