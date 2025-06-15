@@ -12,6 +12,21 @@ export interface Flashcard {
   updated_at: string;
 }
 
+// Transform Supabase flashcard to match FlashcardView expectations
+const transformFlashcard = (card: Flashcard) => ({
+  id: card.id,
+  topic: card.topic,
+  category: card.topic, // Use topic as category
+  difficulty: card.difficulty as "Beginner" | "Intermediate" | "Advanced",
+  front: card.question,
+  back: {
+    definition: card.answer,
+    analogy: "",
+    realWorldUse: "",
+    codeExample: ""
+  }
+});
+
 export const useFlashcards = (topic?: string) => {
   return useQuery({
     queryKey: ['flashcards', topic],
@@ -32,7 +47,7 @@ export const useFlashcards = (topic?: string) => {
         throw error;
       }
 
-      return data as Flashcard[];
+      return (data as Flashcard[]).map(transformFlashcard);
     },
   });
 };
@@ -52,7 +67,7 @@ export const useFlashcardsByTopic = (topic: string) => {
         throw error;
       }
 
-      return data as Flashcard[];
+      return (data as Flashcard[]).map(transformFlashcard);
     },
     enabled: !!topic,
   });
