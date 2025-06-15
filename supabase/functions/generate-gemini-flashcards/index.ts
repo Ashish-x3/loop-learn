@@ -14,7 +14,13 @@ const GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/
 
 // Helper: generate flashcards with Gemini API
 async function generateWithGemini(topic: string) {
-  // Customize the prompt for flashcards listing and structure
+  // Debug logging about key
+  if (!GEMINI_API_KEY) {
+    console.error("[Gemini] API key is missing.");
+  } else {
+    console.info("[Gemini] API key loaded, length:", GEMINI_API_KEY.length);
+  }
+
   const prompt = `
 Act as a kids' coding teacher. 
 Create exactly 5 flashcards on the topic "${topic}", each with:
@@ -30,7 +36,6 @@ Return JSON array only, in this format:
   }
 ]
   `;
-  // Gemini expects a 'contents' array
   const body = {
     contents: [{ parts: [{ text: prompt }] }]
   };
@@ -41,13 +46,16 @@ Return JSON array only, in this format:
     body: JSON.stringify(body)
   });
 
+  // Improved error logging
   if (!response.ok) {
+    const errorText = await response.text();
+    console.error("[Gemini Error] Status:", response.status, response.statusText);
+    console.error("[Gemini Error] Body:", errorText);
     throw new Error("Failed to generate flashcards from Gemini");
   }
 
   const data = await response.json();
   const text = data?.candidates?.[0]?.content?.parts?.[0]?.text || "";
-  // Find the first JSON array segment in the output
   const jsonArrayStr = text.match(/\[\s*{[\s\S]*?}\s*\]/)?.[0];
   if (!jsonArrayStr) throw new Error("Could not parse Gemini response as flashcards");
   const flashcards = JSON.parse(jsonArrayStr);
