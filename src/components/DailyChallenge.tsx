@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import { Target, Clock, Star, ArrowRight, CheckCircle } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card, CardContent } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
+import { Badge } from '@/components/ui/badge';
 import { Link } from 'react-router-dom';
 
 const DailyChallenge = () => {
@@ -11,75 +12,63 @@ const DailyChallenge = () => {
   const progress = 65;
 
   return (
-    <div className="relative">
-      <Card className="group overflow-hidden border-0 bg-gradient-to-br from-slate-50 via-white to-slate-100 dark:from-slate-900/50 dark:via-slate-800/50 dark:to-slate-900/50 shadow-xl shadow-slate-500/5 hover:shadow-2xl hover:shadow-slate-500/10 transition-all duration-500 hover:-translate-y-2">
-        <CardContent className="p-8">
-          {/* Header */}
-          <div className="flex items-center justify-between mb-6">
-            <div className="flex items-center gap-3">
-              <div className="w-12 h-12 bg-gradient-to-r from-emerald-500 to-teal-500 rounded-2xl flex items-center justify-center shadow-lg">
-                <Target className="w-6 h-6 text-white" />
-              </div>
-              <div>
-                <h3 className="text-xl font-bold text-slate-900 dark:text-white">Daily Challenge</h3>
-                <p className="text-sm text-slate-600 dark:text-slate-400">Complete 10 cards today</p>
-              </div>
+    <Card className="border-0 shadow-sm hover:shadow-md transition-shadow duration-200">
+      <CardHeader className="pb-3">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 bg-blue-500 rounded-lg flex items-center justify-center">
+              <Target className="w-5 h-5 text-white" />
             </div>
-            
-            {completed ? (
-              <div className="flex items-center gap-2 bg-emerald-100 dark:bg-emerald-900/50 px-4 py-2 rounded-xl">
-                <CheckCircle className="w-5 h-5 text-emerald-600 dark:text-emerald-400" />
-                <span className="text-sm font-medium text-emerald-700 dark:text-emerald-300">Complete!</span>
-              </div>
-            ) : (
-              <div className="flex items-center gap-2 text-slate-600 dark:text-slate-400">
-                <Clock className="w-5 h-5" />
-                <span className="text-sm font-medium">8h left</span>
-              </div>
-            )}
-          </div>
-
-          {/* Progress */}
-          <div className="space-y-4 mb-6">
-            <div className="flex items-center justify-between text-sm">
-              <span className="font-medium text-slate-700 dark:text-slate-300">Progress</span>
-              <span className="text-slate-600 dark:text-slate-400">6 / 10 cards</span>
+            <div>
+              <CardTitle className="text-lg">Daily Challenge</CardTitle>
+              <p className="text-sm text-muted-foreground">Complete 10 cards today</p>
             </div>
-            <Progress 
-              value={progress} 
-              className="h-3 bg-slate-100 dark:bg-slate-800"
-            />
           </div>
+          
+          {completed ? (
+            <Badge variant="secondary" className="bg-green-100 text-green-700 hover:bg-green-100">
+              <CheckCircle className="w-4 h-4 mr-1" />
+              Complete!
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="gap-1">
+              <Clock className="w-4 h-4" />
+              8h left
+            </Badge>
+          )}
+        </div>
+      </CardHeader>
 
-          {/* Reward */}
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <div className="flex items-center gap-1 bg-amber-100 dark:bg-amber-900/50 px-3 py-2 rounded-xl">
-                <Star className="w-4 h-4 text-amber-600 dark:text-amber-400" />
-                <span className="text-sm font-medium text-amber-700 dark:text-amber-300">+50 XP</span>
-              </div>
-              <span className="text-sm text-slate-600 dark:text-slate-400">Reward</span>
-            </div>
-
-            <Link to="/learn">
-              <Button 
-                className="bg-gradient-to-r from-emerald-500 to-teal-500 hover:from-emerald-600 hover:to-teal-600 text-white shadow-lg hover:shadow-xl transition-all duration-300 hover:-translate-y-1 rounded-xl group"
-                onClick={() => !completed && setCompleted(true)}
-              >
-                <span className="flex items-center gap-2">
-                  Continue
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
-                </span>
-              </Button>
-            </Link>
+      <CardContent className="space-y-4">
+        {/* Progress */}
+        <div className="space-y-2">
+          <div className="flex items-center justify-between text-sm">
+            <span className="font-medium">Progress</span>
+            <span className="text-muted-foreground">6 / 10 cards</span>
           </div>
-        </CardContent>
+          <Progress value={progress} className="h-2" />
+        </div>
 
-        {/* Decorative elements */}
-        <div className="absolute top-4 right-4 w-20 h-20 bg-gradient-to-br from-emerald-200/20 to-teal-200/20 rounded-full blur-lg" />
-        <div className="absolute bottom-4 left-4 w-16 h-16 bg-gradient-to-br from-slate-200/20 to-gray-200/20 rounded-full blur-lg" />
-      </Card>
-    </div>
+        {/* Reward and Action */}
+        <div className="flex items-center justify-between pt-2">
+          <Badge variant="secondary" className="bg-amber-100 text-amber-700 hover:bg-amber-100">
+            <Star className="w-4 h-4 mr-1" />
+            +50 XP
+          </Badge>
+
+          <Link to="/learn">
+            <Button 
+              size="sm"
+              className="gap-2"
+              onClick={() => !completed && setCompleted(true)}
+            >
+              Continue
+              <ArrowRight className="w-4 h-4" />
+            </Button>
+          </Link>
+        </div>
+      </CardContent>
+    </Card>
   );
 };
 
