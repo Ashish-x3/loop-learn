@@ -1,5 +1,4 @@
-
-import { useQuery } from '@tanstack/react-query';
+import { useQuery, UseQueryOptions } from '@tanstack/react-query';
 import { supabase } from '@/integrations/supabase/client';
 
 export interface Flashcard {
@@ -50,7 +49,10 @@ const transformFlashcard = (card: Flashcard) => {
   };
 };
 
-export const useFlashcards = (topic?: string) => {
+export const useFlashcards = (
+  topic?: string,
+  options?: Partial<UseQueryOptions>
+) => {
   return useQuery({
     queryKey: ['flashcards', topic],
     queryFn: async () => {
@@ -72,6 +74,7 @@ export const useFlashcards = (topic?: string) => {
 
       return (data as Flashcard[]).map(transformFlashcard);
     },
+    ...options,
   });
 };
 
