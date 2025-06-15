@@ -1,6 +1,6 @@
 
 import { useState } from 'react';
-import { User, Settings, Trophy, Target, Brain, Calendar, ArrowLeft, Edit, Palette, Moon, Sun } from 'lucide-react';
+import { User, Settings, ArrowLeft, Edit, Palette, Moon, Sun } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -19,13 +19,6 @@ const Profile = () => {
     joinDate: "2024-01-01",
     avatar: null
   };
-
-  const stats = [
-    { label: "Cards Learned", value: "127", icon: Brain, color: "text-purple-600" },
-    { label: "Current Streak", value: "7 days", icon: Calendar, color: "text-blue-600" },
-    { label: "Achievements", value: "3", icon: Trophy, color: "text-yellow-600" },
-    { label: "Goals Completed", value: "1", icon: Target, color: "text-green-600" }
-  ];
 
   const recentActivity = [
     { action: "Completed", item: "JavaScript Promise", time: "2 hours ago" },
@@ -101,28 +94,6 @@ const Profile = () => {
             </div>
           </CardContent>
         </Card>
-
-        {/* Stats Overview */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          {stats.map((stat, index) => {
-            const Icon = stat.icon;
-            return (
-              <Card key={index}>
-                <CardContent className="p-6 text-center space-y-3">
-                  <div className="flex justify-center">
-                    <div className="p-2 bg-muted rounded-lg">
-                      <Icon className={`w-5 h-5 ${stat.color}`} />
-                    </div>
-                  </div>
-                  <div className="space-y-1">
-                    <div className={`text-2xl font-bold ${stat.color}`}>{stat.value}</div>
-                    <p className="text-sm text-muted-foreground">{stat.label}</p>
-                  </div>
-                </CardContent>
-              </Card>
-            );
-          })}
-        </div>
 
         <div className="grid lg:grid-cols-2 gap-8">
           {/* Customization Section */}
