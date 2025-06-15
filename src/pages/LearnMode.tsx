@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -113,77 +112,46 @@ const LearnMode = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      {/* Header */}
+      {/* Header - Simplified for mobile */}
       <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-4">
-          <div className="flex items-center justify-between gap-2">
-            {/* Left side - Back button and title */}
-            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-auto sm:px-3">
-                  <ArrowLeft className="w-4 h-4" />
-                  <span className="hidden sm:inline sm:ml-2">Back</span>
-                </Button>
-              </Link>
-              <div className="min-w-0 flex-1">
-                <h1 className="text-base sm:text-xl font-semibold truncate">Learn Mode</h1>
-                <p className="text-xs sm:text-sm text-muted-foreground truncate">
-                  Card {currentCardIndex + 1} of {sampleFlashcards.length}
-                </p>
-              </div>
+        <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
+          <div className="flex items-center justify-between gap-3">
+            {/* Left side - Back button */}
+            <Link to="/">
+              <Button variant="ghost" size="sm" className="p-2 h-9 w-9">
+                <ArrowLeft className="w-4 h-4" />
+              </Button>
+            </Link>
+            
+            {/* Center - Title and progress */}
+            <div className="flex-1 text-center">
+              <h1 className="text-lg font-semibold">Learn Mode</h1>
+              <p className="text-sm text-muted-foreground">
+                {currentCardIndex + 1} of {sampleFlashcards.length}
+              </p>
             </div>
             
-            {/* Right side - Action buttons */}
-            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
-              <Button variant="outline" size="sm" onClick={handleRestart} className="h-8 px-2 sm:h-9 sm:px-3">
-                <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
-                <span className="hidden sm:inline sm:ml-2">Restart</span>
-              </Button>
-              <Button
-                onClick={toggleTheme}
-                size="sm"
-                variant="outline"
-                className="h-8 w-8 p-0 sm:h-9 sm:w-9"
-              >
-                {isDarkMode ? <Sun className="w-3 h-3 sm:w-4 sm:h-4" /> : <Moon className="w-3 h-3 sm:w-4 sm:h-4" />}
-              </Button>
-              <Link to="/">
-                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 sm:h-9 sm:w-9">
-                  <Home className="w-3 h-3 sm:w-4 sm:h-4" />
-                </Button>
-              </Link>
-            </div>
+            {/* Right side - Theme toggle */}
+            <Button
+              onClick={toggleTheme}
+              size="sm"
+              variant="ghost"
+              className="h-9 w-9 p-0"
+            >
+              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+            </Button>
           </div>
         </div>
       </header>
 
-      <main className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 lg:py-8 pb-24 sm:pb-32 space-y-4 sm:space-y-6 lg:space-y-8">
+      <main className="container mx-auto px-3 sm:px-4 py-4 pb-32 space-y-4">
         {/* Progress */}
-        <div className="space-y-2 sm:space-y-3">
-          <div className="flex items-center justify-between text-xs sm:text-sm">
-            <span className="font-medium">Progress</span>
-            <span className="text-muted-foreground">{Math.round(progress)}%</span>
+        <div className="space-y-2">
+          <Progress value={progress} className="h-2" />
+          <div className="flex justify-between text-sm text-muted-foreground">
+            <span>{Math.round(progress)}% Complete</span>
+            <span>{completedCards.length} Done</span>
           </div>
-          <Progress value={progress} className="h-1.5 sm:h-2" />
-        </div>
-
-        {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
-          {[
-            { value: currentCardIndex + 1, label: "Current", color: "text-purple-600" },
-            { value: sampleFlashcards.length, label: "Total", color: "text-blue-600" },
-            { value: completedCards.length, label: "Done", color: "text-green-600" },
-            { value: sampleFlashcards.length - completedCards.length, label: "Left", color: "text-orange-600" }
-          ].map((stat, index) => (
-            <Card key={index}>
-              <CardContent className="p-2 sm:p-4 text-center space-y-1 sm:space-y-2">
-                <div className={`text-lg sm:text-2xl font-bold ${stat.color}`}>
-                  {stat.value}
-                </div>
-                <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
-              </CardContent>
-            </Card>
-          ))}
         </div>
 
         {/* Flashcard */}
@@ -194,6 +162,38 @@ const LearnMode = () => {
             onPrevious={currentCardIndex > 0 ? handlePrevious : undefined}
             showNavigation={true}
           />
+        </div>
+
+        {/* Mobile Navigation Buttons - More prominent */}
+        <div className="fixed bottom-24 left-0 right-0 px-4 z-30">
+          <div className="bg-background/95 backdrop-blur border rounded-2xl p-3 shadow-lg">
+            <div className="flex items-center justify-between gap-4">
+              <Button
+                variant="outline"
+                onClick={handlePrevious}
+                disabled={currentCardIndex === 0}
+                className="flex-1 h-12 text-base font-medium"
+              >
+                Previous
+              </Button>
+              
+              <Button
+                variant="outline"
+                onClick={handleRestart}
+                className="h-12 px-4"
+              >
+                <RotateCcw className="w-4 h-4" />
+              </Button>
+
+              <Button
+                onClick={handleNext}
+                disabled={currentCardIndex >= sampleFlashcards.length - 1}
+                className="flex-1 h-12 text-base font-medium"
+              >
+                Next
+              </Button>
+            </div>
+          </div>
         </div>
 
         {/* Completion Message */}
