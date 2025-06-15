@@ -16,7 +16,7 @@ const DailyChallenge = () => {
       <CardHeader className="pb-3 p-4 sm:p-6">
         <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 sm:gap-0">
           <div className="flex items-center gap-3">
-            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-blue-500/80 rounded-xl flex items-center justify-center backdrop-blur-sm">
+            <div className="w-8 h-8 sm:w-10 sm:h-10 bg-primary/80 rounded-xl flex items-center justify-center backdrop-blur-sm">
               <Target className="w-4 h-4 sm:w-5 sm:h-5 text-white" />
             </div>
             <div>
@@ -59,7 +59,7 @@ const DailyChallenge = () => {
           <Link to="/learn" className="w-full sm:w-auto">
             <Button 
               size="sm"
-              className="w-full sm:w-auto gap-2 bg-blue-500/80 hover:bg-blue-600/80 text-white border-0 backdrop-blur-sm text-sm h-9"
+              className="w-full sm:w-auto gap-2 bg-primary/80 hover:bg-primary/90 text-white border-0 backdrop-blur-sm text-sm h-9"
               onClick={() => !completed && setCompleted(true)}
             >
               Continue
