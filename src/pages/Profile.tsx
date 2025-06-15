@@ -1,4 +1,3 @@
-
 import { useState } from 'react';
 import { User, ArrowLeft, Edit, Palette, Moon, Sun, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -9,16 +8,11 @@ import { Separator } from '@/components/ui/separator';
 import { Switch } from '@/components/ui/switch';
 import FloatingDock from '@/components/FloatingDock';
 import { useTheme } from '@/contexts/ThemeContext';
+import { useAuth } from '@/contexts/AuthContext';
 
 const Profile = () => {
   const { isDark, accentColor, setIsDark, setAccentColor } = useTheme();
-  
-  const user = {
-    name: "Alex Johnson",
-    email: "alex@example.com", 
-    joinDate: "2024-01-01",
-    avatar: null
-  };
+  const { user, profile, signOut } = useAuth();
 
   const recentActivity = [
     { action: "Completed", item: "JavaScript Promise", time: "2 hours ago" },
@@ -43,10 +37,13 @@ const Profile = () => {
     { name: 'Red', value: 'red', color: 'bg-red-500' }
   ];
 
-  const handleSignOut = () => {
-    console.log('User signed out');
-    // Add sign-out logic here
+  const handleSignOut = async () => {
+    await signOut();
   };
+
+  if (!user || !profile) {
+    return null;
+  }
 
   return (
     <div className="min-h-screen bg-background">
@@ -55,7 +52,7 @@ const Profile = () => {
         <div className="container mx-auto px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-2 sm:space-x-4">
-              <Link to="/">
+              <Link to="/dashboard">
                 <Button variant="ghost" size="sm" className="h-8 w-8 sm:w-auto sm:h-9">
                   <ArrowLeft className="w-4 h-4 sm:mr-2" />
                   <span className="hidden sm:inline">Back</span>
@@ -90,14 +87,14 @@ const Profile = () => {
               </div>
               <div className="flex-1 min-w-0">
                 <div className="flex items-center space-x-2 sm:space-x-3 mb-1 sm:mb-2">
-                  <h2 className="text-lg sm:text-2xl font-bold truncate">{user.name}</h2>
+                  <h2 className="text-lg sm:text-2xl font-bold truncate">{profile.username}</h2>
                   <Button variant="ghost" size="sm" className="h-6 w-6 sm:h-8 sm:w-8 flex-shrink-0">
                     <Edit className="w-3 h-3 sm:w-4 sm:h-4" />
                   </Button>
                 </div>
                 <p className="text-sm sm:text-base text-muted-foreground mb-1 truncate">{user.email}</p>
                 <p className="text-xs sm:text-sm text-muted-foreground">
-                  Member since {new Date(user.joinDate).toLocaleDateString()}
+                  Member since {new Date(profile.created_at).toLocaleDateString()}
                 </p>
               </div>
             </div>
