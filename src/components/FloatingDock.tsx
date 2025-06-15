@@ -9,7 +9,7 @@ const FloatingDock = () => {
   const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const dockItems = [
-    { icon: Home, label: 'Home', path: '/' },
+    { icon: Home, label: 'Dashboard', path: '/dashboard' },
     { icon: Brain, label: 'Learn', path: '/learn' },
     { icon: Plus, label: 'Create', path: '/create' },
     { icon: BookOpen, label: 'Saved', path: '/saved' },
