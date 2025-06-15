@@ -57,13 +57,18 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
     const colorConfig = accentColorMap[accentColor];
     console.log('Applying accent color:', accentColor, colorConfig);
     
-    // Set both hex and HSL versions for different use cases
-    document.documentElement.style.setProperty('--accent-color', colorConfig.hex);
-    document.documentElement.style.setProperty('--primary', colorConfig.hsl);
-    document.documentElement.style.setProperty('--ring', colorConfig.hsl);
+    // Apply accent color to all relevant CSS custom properties
+    const root = document.documentElement;
+    root.style.setProperty('--accent-color', colorConfig.hex);
+    root.style.setProperty('--primary', colorConfig.hsl);
+    root.style.setProperty('--primary-foreground', isDark ? '222.2 84% 4.9%' : '210 40% 98%');
+    root.style.setProperty('--ring', colorConfig.hsl);
+    
+    // Force re-render by triggering a small layout change
+    root.style.setProperty('--accent-applied', Date.now().toString());
     
     localStorage.setItem('accent-color', accentColor);
-  }, [accentColor]);
+  }, [accentColor, isDark]);
 
   const setAccentColor = (color: AccentColor) => {
     console.log('ThemeContext: setAccentColor called with:', color);
