@@ -55,11 +55,13 @@ export const ThemeProvider: React.FC<{ children: React.ReactNode }> = ({ childre
 
   useEffect(() => {
     const color = accentColorMap[accentColor];
+    console.log('Applying accent color:', accentColor, color);
     document.documentElement.style.setProperty('--accent-color', color);
     localStorage.setItem('accent-color', accentColor);
   }, [accentColor]);
 
   const setAccentColor = (color: AccentColor) => {
+    console.log('ThemeContext: setAccentColor called with:', color);
     setAccentColorState(color);
   };
 

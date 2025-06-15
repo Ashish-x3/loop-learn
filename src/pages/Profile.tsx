@@ -161,7 +161,10 @@ const Profile = () => {
                   {accentColors.map((color) => (
                     <button
                       key={color.value}
-                      onClick={() => setAccentColor(color.value as any)}
+                      onClick={() => {
+                        console.log('Setting accent color to:', color.value);
+                        setAccentColor(color.value as any);
+                      }}
                       className={`flex items-center space-x-2 p-3 rounded-lg border transition-all ${
                         accentColor === color.value 
                           ? 'border-primary bg-primary/5' 
@@ -231,38 +234,6 @@ const Profile = () => {
                 </div>
               </div>
             ))}
-          </CardContent>
-        </Card>
-
-        {/* Quick Actions */}
-        <Card className="mt-8">
-          <CardHeader>
-            <CardTitle>Quick Actions</CardTitle>
-            <CardDescription>Common profile actions</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-              <Link to="/achievements">
-                <Button variant="outline" className="w-full">
-                  <Trophy className="w-4 h-4 mr-2" />
-                  View Achievements
-                </Button>
-              </Link>
-              <Link to="/goals">
-                <Button variant="outline" className="w-full">
-                  <Target className="w-4 h-4 mr-2" />
-                  Manage Goals
-                </Button>
-              </Link>
-              <Button variant="outline" className="w-full">
-                <Settings className="w-4 h-4 mr-2" />
-                Account Settings
-              </Button>
-              <Button variant="outline" className="w-full">
-                <User className="w-4 h-4 mr-2" />
-                Edit Profile
-              </Button>
-            </div>
           </CardContent>
         </Card>
       </div>
