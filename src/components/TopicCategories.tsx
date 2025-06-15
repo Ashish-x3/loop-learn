@@ -1,18 +1,18 @@
 
-import { Brain, Code, Palette, Calculator, Globe, BookOpen, Lightbulb, Heart } from 'lucide-react';
+import { Brain, Code, Palette, Calculator, Globe, BookOpen, Lightbulb, Heart, Database, Server, Smartphone, Monitor } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 
 const TopicCategories = () => {
   const categories = [
-    { name: "Programming", icon: Code, count: 128 },
-    { name: "Design", icon: Palette, count: 87 },
-    { name: "Science", icon: Calculator, count: 156 },
-    { name: "Languages", icon: Globe, count: 92 },
-    { name: "Literature", icon: BookOpen, count: 73 },
-    { name: "Psychology", icon: Brain, count: 64 },
-    { name: "Philosophy", icon: Lightbulb, count: 45 },
-    { name: "Health", icon: Heart, count: 38 }
+    { name: "JavaScript", icon: Code, count: 128 },
+    { name: "React", icon: Lightbulb, count: 87 },
+    { name: "Data Structures", icon: Database, count: 156 },
+    { name: "Algorithms", icon: Brain, count: 92 },
+    { name: "CSS & Design", icon: Palette, count: 73 },
+    { name: "Backend Dev", icon: Server, count: 64 },
+    { name: "Mobile Dev", icon: Smartphone, count: 45 },
+    { name: "Web Dev", icon: Monitor, count: 38 }
   ];
 
   return (
@@ -22,7 +22,7 @@ const TopicCategories = () => {
           Explore Topics
         </h2>
         <p className="text-sm sm:text-base lg:text-lg text-black/70 dark:text-white/70 max-w-2xl mx-auto">
-          Discover thousands of flashcards across diverse subjects. Choose your path to mastery.
+          Master software development and computer science concepts through interactive flashcards.
         </p>
       </div>
 
