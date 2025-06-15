@@ -115,38 +115,41 @@ const LearnMode = () => {
     <div className="min-h-screen bg-background">
       {/* Header */}
       <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
+        <div className="container mx-auto px-3 sm:px-4 py-2 sm:py-4">
+          <div className="flex items-center justify-between gap-2">
+            {/* Left side - Back button and title */}
+            <div className="flex items-center gap-2 sm:gap-3 min-w-0 flex-1">
               <Link to="/">
-                <Button variant="ghost" size="sm">
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back
+                <Button variant="ghost" size="sm" className="p-1.5 sm:p-2 h-8 w-8 sm:h-9 sm:w-auto sm:px-3">
+                  <ArrowLeft className="w-4 h-4" />
+                  <span className="hidden sm:inline sm:ml-2">Back</span>
                 </Button>
               </Link>
-              <div>
-                <h1 className="text-xl font-semibold">Learn Mode</h1>
-                <p className="text-sm text-muted-foreground">
+              <div className="min-w-0 flex-1">
+                <h1 className="text-base sm:text-xl font-semibold truncate">Learn Mode</h1>
+                <p className="text-xs sm:text-sm text-muted-foreground truncate">
                   Card {currentCardIndex + 1} of {sampleFlashcards.length}
                 </p>
               </div>
             </div>
-            <div className="flex items-center space-x-2">
-              <Button variant="outline" size="sm" onClick={handleRestart}>
-                <RotateCcw className="w-4 h-4 mr-2" />
-                Restart
+            
+            {/* Right side - Action buttons */}
+            <div className="flex items-center gap-1 sm:gap-2 flex-shrink-0">
+              <Button variant="outline" size="sm" onClick={handleRestart} className="h-8 px-2 sm:h-9 sm:px-3">
+                <RotateCcw className="w-3 h-3 sm:w-4 sm:h-4" />
+                <span className="hidden sm:inline sm:ml-2">Restart</span>
               </Button>
               <Button
                 onClick={toggleTheme}
                 size="sm"
                 variant="outline"
-                className="rounded-full w-9 h-9 p-0"
+                className="h-8 w-8 p-0 sm:h-9 sm:w-9"
               >
-                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+                {isDarkMode ? <Sun className="w-3 h-3 sm:w-4 sm:h-4" /> : <Moon className="w-3 h-3 sm:w-4 sm:h-4" />}
               </Button>
               <Link to="/">
-                <Button variant="ghost" size="sm">
-                  <Home className="w-4 h-4" />
+                <Button variant="ghost" size="sm" className="h-8 w-8 p-0 sm:h-9 sm:w-9">
+                  <Home className="w-3 h-3 sm:w-4 sm:h-4" />
                 </Button>
               </Link>
             </div>
@@ -154,60 +157,62 @@ const LearnMode = () => {
         </div>
       </header>
 
-      <main className="container mx-auto px-4 py-8 pb-32 space-y-8">
+      <main className="container mx-auto px-3 sm:px-4 py-3 sm:py-6 lg:py-8 pb-24 sm:pb-32 space-y-4 sm:space-y-6 lg:space-y-8">
         {/* Progress */}
-        <div className="space-y-3">
-          <div className="flex items-center justify-between text-sm">
+        <div className="space-y-2 sm:space-y-3">
+          <div className="flex items-center justify-between text-xs sm:text-sm">
             <span className="font-medium">Progress</span>
             <span className="text-muted-foreground">{Math.round(progress)}%</span>
           </div>
-          <Progress value={progress} className="h-2" />
+          <Progress value={progress} className="h-1.5 sm:h-2" />
         </div>
 
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-2 sm:gap-4">
           {[
-            { value: currentCardIndex + 1, label: "Current Card", color: "text-purple-600" },
-            { value: sampleFlashcards.length, label: "Total Cards", color: "text-blue-600" },
-            { value: completedCards.length, label: "Completed", color: "text-green-600" },
-            { value: sampleFlashcards.length - completedCards.length, label: "Remaining", color: "text-orange-600" }
+            { value: currentCardIndex + 1, label: "Current", color: "text-purple-600" },
+            { value: sampleFlashcards.length, label: "Total", color: "text-blue-600" },
+            { value: completedCards.length, label: "Done", color: "text-green-600" },
+            { value: sampleFlashcards.length - completedCards.length, label: "Left", color: "text-orange-600" }
           ].map((stat, index) => (
             <Card key={index}>
-              <CardContent className="p-4 text-center space-y-2">
-                <div className={`text-2xl font-bold ${stat.color}`}>
+              <CardContent className="p-2 sm:p-4 text-center space-y-1 sm:space-y-2">
+                <div className={`text-lg sm:text-2xl font-bold ${stat.color}`}>
                   {stat.value}
                 </div>
-                <div className="text-sm text-muted-foreground">{stat.label}</div>
+                <div className="text-xs sm:text-sm text-muted-foreground">{stat.label}</div>
               </CardContent>
             </Card>
           ))}
         </div>
 
         {/* Flashcard */}
-        <FlashcardView
-          flashcard={currentCard}
-          onNext={currentCardIndex < sampleFlashcards.length - 1 ? handleNext : undefined}
-          onPrevious={currentCardIndex > 0 ? handlePrevious : undefined}
-          showNavigation={true}
-        />
+        <div className="px-1 sm:px-0">
+          <FlashcardView
+            flashcard={currentCard}
+            onNext={currentCardIndex < sampleFlashcards.length - 1 ? handleNext : undefined}
+            onPrevious={currentCardIndex > 0 ? handlePrevious : undefined}
+            showNavigation={true}
+          />
+        </div>
 
         {/* Completion Message */}
         {currentCardIndex === sampleFlashcards.length - 1 && completedCards.includes(currentCard.id) && (
           <Card className="border-green-200 bg-green-50 dark:bg-green-950 dark:border-green-800">
-            <CardHeader className="text-center">
-              <div className="text-4xl mb-4">🎉</div>
-              <CardTitle className="text-green-800 dark:text-green-200">Fantastic Work!</CardTitle>
+            <CardHeader className="text-center pb-2 sm:pb-4">
+              <div className="text-2xl sm:text-4xl mb-2 sm:mb-4">🎉</div>
+              <CardTitle className="text-green-800 dark:text-green-200 text-lg sm:text-xl">Fantastic Work!</CardTitle>
             </CardHeader>
-            <CardContent className="text-center space-y-4">
-              <p className="text-green-700 dark:text-green-300">
+            <CardContent className="text-center space-y-3 sm:space-y-4 pt-0">
+              <p className="text-green-700 dark:text-green-300 text-sm sm:text-base">
                 You've mastered all the flashcards in this session!
               </p>
-              <div className="flex flex-col sm:flex-row justify-center gap-3">
-                <Button onClick={handleRestart} variant="outline">
+              <div className="flex flex-col sm:flex-row justify-center gap-2 sm:gap-3">
+                <Button onClick={handleRestart} variant="outline" size="sm" className="text-sm">
                   🔄 Study Again
                 </Button>
                 <Link to="/">
-                  <Button variant="outline">
+                  <Button variant="outline" size="sm" className="text-sm">
                     🏠 Back to Home
                   </Button>
                 </Link>
