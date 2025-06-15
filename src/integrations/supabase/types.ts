@@ -9,7 +9,74 @@ export type Json =
 export type Database = {
   public: {
     Tables: {
-      [_ in never]: never
+      flashcards: {
+        Row: {
+          answer: string
+          created_at: string
+          difficulty: string | null
+          id: string
+          question: string
+          topic: string
+          updated_at: string
+        }
+        Insert: {
+          answer: string
+          created_at?: string
+          difficulty?: string | null
+          id?: string
+          question: string
+          topic: string
+          updated_at?: string
+        }
+        Update: {
+          answer?: string
+          created_at?: string
+          difficulty?: string | null
+          id?: string
+          question?: string
+          topic?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      user_progress: {
+        Row: {
+          attempts: number | null
+          created_at: string
+          flashcard_id: string | null
+          id: string
+          is_mastered: boolean | null
+          last_reviewed: string | null
+          user_id: string | null
+        }
+        Insert: {
+          attempts?: number | null
+          created_at?: string
+          flashcard_id?: string | null
+          id?: string
+          is_mastered?: boolean | null
+          last_reviewed?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          attempts?: number | null
+          created_at?: string
+          flashcard_id?: string | null
+          id?: string
+          is_mastered?: boolean | null
+          last_reviewed?: string | null
+          user_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "user_progress_flashcard_id_fkey"
+            columns: ["flashcard_id"]
+            isOneToOne: false
+            referencedRelation: "flashcards"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never

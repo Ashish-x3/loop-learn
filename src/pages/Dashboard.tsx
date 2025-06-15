@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Progress } from '@/components/ui/progress';
 import DailyChallenge from '@/components/DailyChallenge';
-import TopicCategories from '@/components/TopicCategories';
+import TopicSearch from '@/components/TopicSearch';
 import StatsSection from '@/components/StatsSection';
 import FloatingDock from '@/components/FloatingDock';
 
@@ -192,9 +192,9 @@ const Dashboard = () => {
           <DailyChallenge />
         </section>
 
-        {/* Topic Categories */}
+        {/* Topic Search - Replaces Topic Categories */}
         <section>
-          <TopicCategories />
+          <TopicSearch />
         </section>
 
         {/* Stats and Progress */}

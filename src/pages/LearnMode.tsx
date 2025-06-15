@@ -3,24 +3,24 @@ import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { ArrowLeft, Home, RotateCcw, Moon, Sun } from 'lucide-react';
+import { ArrowLeft, Home, RotateCcw, Moon, Sun, Loader2 } from 'lucide-react';
 import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FlashcardView from '@/components/FlashcardView';
 import FloatingDock from '@/components/FloatingDock';
-import { getFlashcardsByTopic, getAllFlashcards } from '@/data/flashcards';
+import { useFlashcardsByTopic } from '@/hooks/useFlashcards';
 
 const LearnMode = () => {
   const { topic } = useParams();
   const navigate = useNavigate();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [completedCards, setCompletedCards] = useState<number[]>([]);
+  const [completedCards, setCompletedCards] = useState<string[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
 
-  // Get flashcards based on topic
-  const flashcards = topic ? getFlashcardsByTopic(topic) : getAllFlashcards().slice(0, 3);
+  // Fetch flashcards from Supabase
+  const { data: flashcards = [], isLoading, error } = useFlashcardsByTopic(topic || '');
   
   // Reset state when topic changes
   useEffect(() => {
@@ -30,10 +30,10 @@ const LearnMode = () => {
 
   // Redirect if no flashcards found for topic
   useEffect(() => {
-    if (topic && flashcards.length === 0) {
+    if (!isLoading && topic && flashcards.length === 0) {
       navigate('/dashboard');
     }
-  }, [topic, flashcards, navigate]);
+  }, [topic, flashcards, navigate, isLoading]);
 
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
@@ -41,6 +41,32 @@ const LearnMode = () => {
     document.documentElement.classList.toggle('dark', newTheme);
     localStorage.setItem('theme', newTheme ? 'dark' : 'light');
   };
+
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <Loader2 className="w-8 h-8 animate-spin mx-auto text-primary" />
+          <h2 className="text-xl font-semibold">Loading flashcards...</h2>
+          <p className="text-muted-foreground">Preparing your learning content</p>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold">Error loading flashcards</h2>
+          <p className="text-muted-foreground">Please try again or go back to dashboard</p>
+          <Link to="/dashboard">
+            <Button>Back to Dashboard</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
 
   const currentCard = flashcards[currentCardIndex];
   const progress = flashcards.length > 0 ? ((currentCardIndex + 1) / flashcards.length) * 100 : 0;
