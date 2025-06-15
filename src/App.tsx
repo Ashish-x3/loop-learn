@@ -10,6 +10,7 @@ import Achievements from "./pages/Achievements";
 import Goals from "./pages/Goals";
 import Create from "./pages/Create";
 import Profile from "./pages/Profile";
+import SavedFlashcards from "./pages/SavedFlashcards";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -27,6 +28,7 @@ const App = () => (
           <Route path="/goals" element={<Goals />} />
           <Route path="/create" element={<Create />} />
           <Route path="/profile" element={<Profile />} />
+          <Route path="/saved" element={<SavedFlashcards />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
