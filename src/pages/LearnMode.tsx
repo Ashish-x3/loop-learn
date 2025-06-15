@@ -8,7 +8,7 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FlashcardView from '@/components/FlashcardView';
 import FloatingDock from '@/components/FloatingDock';
-import { useFlashcardsByTopic } from '@/hooks/useFlashcards';
+import { useFlashcards } from '@/hooks/useFlashcards';
 
 const LearnMode = () => {
   const { topic } = useParams();
@@ -19,8 +19,16 @@ const LearnMode = () => {
     return document.documentElement.classList.contains('dark');
   });
 
-  // Fetch flashcards from Supabase
-  const { data: flashcards = [], isLoading, error } = useFlashcardsByTopic(topic || '');
+  // Use the general useFlashcards hook with topic filtering
+  const { data: allFlashcards = [], isLoading, error } = useFlashcards();
+  
+  // Filter flashcards by topic (case-insensitive)
+  const flashcards = topic 
+    ? allFlashcards.filter(card => 
+        card.topic.toLowerCase() === topic.toLowerCase() ||
+        card.category.toLowerCase() === topic.toLowerCase()
+      )
+    : allFlashcards;
   
   // Reset state when topic changes
   useEffect(() => {
@@ -31,9 +39,11 @@ const LearnMode = () => {
   // Redirect if no flashcards found for topic
   useEffect(() => {
     if (!isLoading && topic && flashcards.length === 0) {
-      navigate('/dashboard');
+      console.log('No flashcards found for topic:', topic);
+      console.log('Available flashcards:', allFlashcards.map(f => ({ topic: f.topic, category: f.category })));
+      // Don't redirect immediately, give user a chance to see the message
     }
-  }, [topic, flashcards, navigate, isLoading]);
+  }, [topic, flashcards, allFlashcards, isLoading]);
 
   const toggleTheme = () => {
     const newTheme = !isDarkMode;
@@ -63,6 +73,31 @@ const LearnMode = () => {
           <Link to="/dashboard">
             <Button>Back to Dashboard</Button>
           </Link>
+        </div>
+      </div>
+    );
+  }
+
+  // Show message if no flashcards found for specific topic
+  if (topic && flashcards.length === 0) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4">
+          <h2 className="text-2xl font-bold">No flashcards found</h2>
+          <p className="text-muted-foreground">
+            No flashcards found for topic: <strong>{topic}</strong>
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Try generating some flashcards for this topic first.
+          </p>
+          <div className="flex gap-3 justify-center">
+            <Link to="/create">
+              <Button>Create Flashcards</Button>
+            </Link>
+            <Link to="/dashboard">
+              <Button variant="outline">Back to Dashboard</Button>
+            </Link>
+          </div>
         </div>
       </div>
     );
