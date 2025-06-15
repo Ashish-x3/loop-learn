@@ -98,24 +98,6 @@ const LearnMode = () => {
     }
   };
 
-  // Show a prompt to select a topic if none is in the URL
-  if (!topic && !isLoading) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="text-center space-y-4 p-4">
-          <BookOpen className="w-12 h-12 mx-auto text-primary" />
-          <h2 className="text-2xl font-bold">Select a Topic to Learn</h2>
-          <p className="text-muted-foreground">
-            Please choose a topic from your dashboard to start a learning session.
-          </p>
-          <Link to="/dashboard">
-            <Button>Back to Dashboard</Button>
-          </Link>
-        </div>
-      </div>
-    );
-  }
-
   if (isLoading) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -142,8 +124,26 @@ const LearnMode = () => {
     );
   }
 
+  // Show a prompt to select a topic if none is in the URL
+  if (!topic) {
+    return (
+      <div className="min-h-screen bg-background flex items-center justify-center">
+        <div className="text-center space-y-4 p-4">
+          <BookOpen className="w-12 h-12 mx-auto text-primary" />
+          <h2 className="text-2xl font-bold">Select a Topic to Learn</h2>
+          <p className="text-muted-foreground">
+            Please choose a topic from your dashboard to start a learning session.
+          </p>
+          <Link to="/dashboard">
+            <Button>Back to Dashboard</Button>
+          </Link>
+        </div>
+      </div>
+    );
+  }
+
   // Show message if no flashcards found for specific topic
-  if (topic && !isLoading && flashcards.length === 0) {
+  if (flashcards.length === 0) {
     const decodedTopic = decodeURIComponent(topic);
     const topicDisplayName = decodedTopic.replace(/-/g, ' ');
 
@@ -209,6 +209,7 @@ const LearnMode = () => {
   };
 
   if (!currentCard) {
+    // This case should ideally not be reached if flashcards.length > 0, but serves as a fallback.
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center space-y-4">
