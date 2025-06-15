@@ -24,6 +24,8 @@ export const useUserProgress = () => {
         throw new Error('User not authenticated');
       }
 
+      console.log('Fetching user progress for user:', user.id);
+
       // Get total flashcards count
       const { data: flashcards, error: flashcardsError } = await supabase
         .from('flashcards')
@@ -34,7 +36,7 @@ export const useUserProgress = () => {
         throw flashcardsError;
       }
 
-      // Get user progress data
+      // Get user progress data with more detailed queries
       const { data: progress, error: progressError } = await supabase
         .from('user_progress')
         .select('*')
@@ -45,33 +47,48 @@ export const useUserProgress = () => {
         throw progressError;
       }
 
+      console.log('User progress data:', progress);
+
       const totalCards = flashcards?.length || 0;
       const masteredCards = progress?.filter(p => p.is_mastered).length || 0;
       const totalAttempts = progress?.reduce((sum, p) => sum + (p.attempts || 0), 0) || 0;
-      const correctAttempts = masteredCards; // Simplified calculation
       
-      const accuracy = totalAttempts > 0 ? Math.round((correctAttempts / totalAttempts) * 100) : 0;
+      // Calculate accuracy based on mastered vs attempted
+      const attemptedCards = progress?.length || 0;
+      const accuracy = attemptedCards > 0 ? Math.round((masteredCards / attemptedCards) * 100) : 0;
       
-      // Calculate streak (simplified - days with activity)
+      // Calculate streak based on recent activity (consecutive days with reviews)
+      const today = new Date();
       const recentDays = progress?.filter(p => {
-        const daysDiff = Math.floor((Date.now() - new Date(p.last_reviewed || '').getTime()) / (1000 * 60 * 60 * 24));
+        if (!p.last_reviewed) return false;
+        const reviewDate = new Date(p.last_reviewed);
+        const daysDiff = Math.floor((today.getTime() - reviewDate.getTime()) / (1000 * 60 * 60 * 24));
         return daysDiff <= 7;
       }).length || 0;
 
-      // Mock study time calculation (in minutes)
-      const studyTime = Math.max(totalAttempts * 2, 0);
+      // Calculate study time based on attempts (rough estimate: 1 minute per attempt)
+      const studyTime = totalAttempts;
 
-      // Generate recent activity data
+      // Generate recent activity data based on actual progress
       const recentActivity = Array.from({ length: 7 }, (_, i) => {
         const date = new Date();
         date.setDate(date.getDate() - i);
+        const dateStr = date.toISOString().split('T')[0];
+        
+        // Count cards studied on this date
+        const cardsStudiedOnDate = progress?.filter(p => {
+          if (!p.last_reviewed) return false;
+          const reviewDateStr = new Date(p.last_reviewed).toISOString().split('T')[0];
+          return reviewDateStr === dateStr;
+        }).length || 0;
+
         return {
-          date: date.toISOString().split('T')[0],
-          cardsStudied: Math.floor(Math.random() * 10) // Simplified for now
+          date: dateStr,
+          cardsStudied: cardsStudiedOnDate
         };
       }).reverse();
 
-      return {
+      const result = {
         totalCards,
         masteredCards,
         accuracy,
@@ -79,6 +96,10 @@ export const useUserProgress = () => {
         studyTime,
         recentActivity
       };
+
+      console.log('Calculated user progress:', result);
+      return result;
     },
+    refetchInterval: 5000, // Refetch every 5 seconds to keep data current
   });
 };

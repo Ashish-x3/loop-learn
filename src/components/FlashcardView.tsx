@@ -23,10 +23,11 @@ interface FlashcardViewProps {
   flashcard: FlashcardData;
   onNext?: () => void;
   onPrevious?: () => void;
+  onCardViewed?: () => void;
   showNavigation?: boolean;
 }
 
-const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }: FlashcardViewProps) => {
+const FlashcardView = ({ flashcard, onNext, onPrevious, onCardViewed, showNavigation = true }: FlashcardViewProps) => {
   const [isFlipped, setIsFlipped] = useState(false);
   const [activeTab, setActiveTab] = useState('definition');
 
@@ -40,6 +41,10 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
     setIsFlipped(!isFlipped);
     if (!isFlipped) {
       setActiveTab('definition');
+      // Track that the card was viewed when flipped to answer
+      if (onCardViewed) {
+        onCardViewed();
+      }
     }
   };
 
@@ -240,7 +245,7 @@ const FlashcardView = ({ flashcard, onNext, onPrevious, showNavigation = true }:
           <div className="hidden sm:flex items-center justify-between w-full">
             <Button
               variant="outline"
-              onClick={onPrevious}
+              onClick={handlePrevious}
               className="flex items-center space-x-2"
               disabled={!onPrevious}
             >

@@ -9,6 +9,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FlashcardView from '@/components/FlashcardView';
 import FloatingDock from '@/components/FloatingDock';
 import { useFlashcards } from '@/hooks/useFlashcards';
+import { supabase } from '@/integrations/supabase/client';
 
 const LearnMode = () => {
   const { topic } = useParams();
@@ -19,17 +20,23 @@ const LearnMode = () => {
     return document.documentElement.classList.contains('dark');
   });
 
-  // Use the general useFlashcards hook with topic filtering
+  // Use the general useFlashcards hook
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // Filter flashcards by topic (case-insensitive)
+  // Filter flashcards by exact topic match (case-insensitive)
   const flashcards = topic 
-    ? allFlashcards.filter(card => 
-        card.topic.toLowerCase() === topic.toLowerCase() ||
-        card.category.toLowerCase() === topic.toLowerCase()
-      )
+    ? allFlashcards.filter(card => {
+        const cardTopic = card.topic.toLowerCase().replace(/\s+/g, '-');
+        const urlTopic = topic.toLowerCase();
+        console.log('Filtering:', { cardTopic, urlTopic, match: cardTopic === urlTopic });
+        return cardTopic === urlTopic;
+      })
     : allFlashcards;
   
+  console.log('Topic from URL:', topic);
+  console.log('All flashcards:', allFlashcards.map(f => ({ topic: f.topic, category: f.category })));
+  console.log('Filtered flashcards:', flashcards.map(f => ({ topic: f.topic, category: f.category })));
+
   // Reset state when topic changes
   useEffect(() => {
     setCurrentCardIndex(0);
@@ -41,7 +48,6 @@ const LearnMode = () => {
     if (!isLoading && topic && flashcards.length === 0) {
       console.log('No flashcards found for topic:', topic);
       console.log('Available flashcards:', allFlashcards.map(f => ({ topic: f.topic, category: f.category })));
-      // Don't redirect immediately, give user a chance to see the message
     }
   }, [topic, flashcards, allFlashcards, isLoading]);
 
@@ -50,6 +56,60 @@ const LearnMode = () => {
     setIsDarkMode(newTheme);
     document.documentElement.classList.toggle('dark', newTheme);
     localStorage.setItem('theme', newTheme ? 'dark' : 'light');
+  };
+
+  const updateUserProgress = async (flashcardId: string, isCompleted: boolean = false) => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      console.log('Updating progress for flashcard:', flashcardId);
+
+      // Check if progress record exists
+      const { data: existingProgress } = await supabase
+        .from('user_progress')
+        .select('*')
+        .eq('user_id', user.id)
+        .eq('flashcard_id', flashcardId)
+        .single();
+
+      if (existingProgress) {
+        // Update existing progress
+        const { error } = await supabase
+          .from('user_progress')
+          .update({
+            attempts: (existingProgress.attempts || 0) + 1,
+            is_mastered: isCompleted,
+            last_reviewed: new Date().toISOString()
+          })
+          .eq('id', existingProgress.id);
+
+        if (error) {
+          console.error('Error updating progress:', error);
+        } else {
+          console.log('Progress updated successfully');
+        }
+      } else {
+        // Create new progress record
+        const { error } = await supabase
+          .from('user_progress')
+          .insert({
+            user_id: user.id,
+            flashcard_id: flashcardId,
+            attempts: 1,
+            is_mastered: isCompleted,
+            last_reviewed: new Date().toISOString()
+          });
+
+        if (error) {
+          console.error('Error creating progress:', error);
+        } else {
+          console.log('Progress created successfully');
+        }
+      }
+    } catch (error) {
+      console.error('Error in updateUserProgress:', error);
+    }
   };
 
   if (isLoading) {
@@ -110,12 +170,14 @@ const LearnMode = () => {
     word.charAt(0).toUpperCase() + word.slice(1)
   ).join(' ') : 'Mixed Topics';
 
-  const handleNext = () => {
+  const handleNext = async () => {
+    if (currentCard && !completedCards.includes(currentCard.id)) {
+      await updateUserProgress(currentCard.id.toString(), true);
+      setCompletedCards([...completedCards, currentCard.id]);
+    }
+
     if (currentCardIndex < flashcards.length - 1) {
       setCurrentCardIndex(currentCardIndex + 1);
-      if (!completedCards.includes(currentCard.id)) {
-        setCompletedCards([...completedCards, currentCard.id]);
-      }
     }
   };
 
@@ -128,6 +190,12 @@ const LearnMode = () => {
   const handleRestart = () => {
     setCurrentCardIndex(0);
     setCompletedCards([]);
+  };
+
+  const handleCardViewed = async () => {
+    if (currentCard) {
+      await updateUserProgress(currentCard.id.toString(), false);
+    }
   };
 
   if (!currentCard) {
@@ -203,6 +271,7 @@ const LearnMode = () => {
             flashcard={currentCard}
             onNext={currentCardIndex < flashcards.length - 1 ? handleNext : undefined}
             onPrevious={currentCardIndex > 0 ? handlePrevious : undefined}
+            onCardViewed={handleCardViewed}
             showNavigation={true}
           />
         </div>
