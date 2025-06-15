@@ -5,24 +5,24 @@ import { Link } from 'react-router-dom';
 
 const TopicCategories = () => {
   const categories = [
-    { name: "JavaScript", icon: Code, count: 128 },
-    { name: "React", icon: Lightbulb, count: 87 },
-    { name: "Data Structures", icon: Database, count: 156 },
-    { name: "Algorithms", icon: Brain, count: 92 },
-    { name: "CSS & Design", icon: Palette, count: 73 },
-    { name: "Backend Dev", icon: Server, count: 64 },
-    { name: "Mobile Dev", icon: Smartphone, count: 45 },
-    { name: "Web Dev", icon: Monitor, count: 38 }
+    { name: "JavaScript", icon: Code, count: 128, slug: "javascript" },
+    { name: "React", icon: Lightbulb, count: 87, slug: "react" },
+    { name: "Data Structures", icon: Database, count: 156, slug: "data-structures" },
+    { name: "Algorithms", icon: Brain, count: 92, slug: "algorithms" },
+    { name: "CSS & Design", icon: Palette, count: 73, slug: "css" },
+    { name: "Backend Dev", icon: Server, count: 64, slug: "backend" },
+    { name: "Mobile Dev", icon: Smartphone, count: 45, slug: "mobile" },
+    { name: "Web Dev", icon: Monitor, count: 38, slug: "web-dev" }
   ];
 
   return (
     <div className="space-y-6 sm:space-y-8">
       <div className="text-center space-y-3 sm:space-y-4 px-4">
         <h2 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-black dark:text-white">
-          Explore Topics
+          Start Learning
         </h2>
         <p className="text-sm sm:text-base lg:text-lg text-black/70 dark:text-white/70 max-w-2xl mx-auto">
-          Master software development and computer science concepts through interactive flashcards.
+          Choose a topic and start learning with AI-powered flashcards designed for easy understanding.
         </p>
       </div>
 
@@ -31,7 +31,7 @@ const TopicCategories = () => {
           const Icon = category.icon;
           
           return (
-            <Link key={category.name} to="/learn">
+            <Link key={category.name} to={`/learn/${category.slug}`}>
               <Card className="group overflow-hidden border-0 backdrop-blur-xl bg-white/10 dark:bg-black/20 border border-white/20 dark:border-white/10 hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer min-h-[140px] sm:min-h-[160px]">
                 <CardContent className="p-4 sm:p-6 text-center space-y-3 sm:space-y-4 flex flex-col justify-center h-full">
                   <div className="flex justify-center">
