@@ -1,48 +1,119 @@
 
-import { Book } from 'lucide-react';
+import { Brain, Code, Palette, Calculator, Globe, BookOpen, Lightbulb, Heart } from 'lucide-react';
 import { Card, CardContent } from '@/components/ui/card';
 import { Link } from 'react-router-dom';
 
 const TopicCategories = () => {
-  const topicCategories = [
-    { name: "JavaScript", count: 45, color: "bg-yellow-500", icon: "🟨" },
-    { name: "React", count: 32, color: "bg-blue-500", icon: "⚛️" },
-    { name: "CSS", count: 28, color: "bg-purple-500", icon: "🎨" },
-    { name: "Git", count: 20, color: "bg-orange-500", icon: "📦" },
-    { name: "HTML", count: 25, color: "bg-red-500", icon: "📄" },
-    { name: "Node.js", count: 18, color: "bg-green-500", icon: "🟢" }
+  const categories = [
+    { 
+      name: "Programming", 
+      icon: Code, 
+      count: 128, 
+      color: "from-blue-500 to-cyan-500",
+      bgColor: "from-blue-50 to-cyan-50 dark:from-blue-950/50 dark:to-cyan-950/50"
+    },
+    { 
+      name: "Design", 
+      icon: Palette, 
+      count: 87, 
+      color: "from-purple-500 to-pink-500",
+      bgColor: "from-purple-50 to-pink-50 dark:from-purple-950/50 dark:to-pink-950/50"
+    },
+    { 
+      name: "Science", 
+      icon: Calculator, 
+      count: 156, 
+      color: "from-green-500 to-emerald-500",
+      bgColor: "from-green-50 to-emerald-50 dark:from-green-950/50 dark:to-emerald-950/50"
+    },
+    { 
+      name: "Languages", 
+      icon: Globe, 
+      count: 92, 
+      color: "from-orange-500 to-red-500",
+      bgColor: "from-orange-50 to-red-50 dark:from-orange-950/50 dark:to-red-950/50"
+    },
+    { 
+      name: "Literature", 
+      icon: BookOpen, 
+      count: 73, 
+      color: "from-indigo-500 to-purple-500",
+      bgColor: "from-indigo-50 to-purple-50 dark:from-indigo-950/50 dark:to-purple-950/50"
+    },
+    { 
+      name: "Psychology", 
+      icon: Brain, 
+      count: 64, 
+      color: "from-rose-500 to-pink-500",
+      bgColor: "from-rose-50 to-pink-50 dark:from-rose-950/50 dark:to-pink-950/50"
+    },
+    { 
+      name: "Philosophy", 
+      icon: Lightbulb, 
+      count: 45, 
+      color: "from-amber-500 to-yellow-500",
+      bgColor: "from-amber-50 to-yellow-50 dark:from-amber-950/50 dark:to-yellow-950/50"
+    },
+    { 
+      name: "Health", 
+      icon: Heart, 
+      count: 38, 
+      color: "from-teal-500 to-green-500",
+      bgColor: "from-teal-50 to-green-50 dark:from-teal-950/50 dark:to-green-950/50"
+    }
   ];
 
   return (
-    <section className="space-y-6">
-      <h2 className="text-3xl font-bold flex items-center gap-3">
-        <Book className="w-6 h-6 text-primary" />
-        Explore Topics
-      </h2>
-      
-      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-        {topicCategories.map((category, index) => (
-          <Link to="/learn" key={index}>
-            <Card className="hover:shadow-md transition-all cursor-pointer group h-full">
-              <CardContent className="p-4 text-center space-y-3">
-                <div className="text-2xl group-hover:scale-110 transition-transform">
-                  {category.icon}
-                </div>
-                <div className="space-y-1">
-                  <h3 className="font-semibold text-sm group-hover:text-primary transition-colors">
-                    {category.name}
-                  </h3>
-                  <p className="text-xs text-muted-foreground">
-                    {category.count} cards
-                  </p>
-                </div>
-                <div className={`w-full h-1 ${category.color} rounded-full opacity-60 group-hover:opacity-100 transition-opacity`} />
-              </CardContent>
-            </Card>
-          </Link>
-        ))}
+    <div className="space-y-8">
+      <div className="text-center space-y-4">
+        <h2 className="text-4xl font-bold text-slate-900 dark:text-white">
+          Explore Topics
+        </h2>
+        <p className="text-lg text-slate-600 dark:text-slate-400 max-w-2xl mx-auto">
+          Discover thousands of flashcards across diverse subjects. Choose your path to mastery.
+        </p>
       </div>
-    </section>
+
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        {categories.map((category, index) => {
+          const Icon = category.icon;
+          
+          return (
+            <Link key={category.name} to="/learn">
+              <Card className={`group overflow-hidden border-0 bg-gradient-to-br ${category.bgColor} hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 cursor-pointer`}>
+                <CardContent className="p-6 text-center space-y-4">
+                  <div className="flex justify-center">
+                    <div className={`w-16 h-16 bg-gradient-to-r ${category.color} rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform duration-300`}>
+                      <Icon className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  
+                  <div className="space-y-2">
+                    <h3 className="text-xl font-bold text-slate-900 dark:text-white group-hover:text-slate-700 dark:group-hover:text-slate-200 transition-colors">
+                      {category.name}
+                    </h3>
+                    <p className="text-slate-600 dark:text-slate-400 text-sm">
+                      {category.count} flashcards
+                    </p>
+                  </div>
+
+                  {/* Progress indicator */}
+                  <div className="w-full bg-white/50 dark:bg-slate-800/50 rounded-full h-2">
+                    <div 
+                      className={`bg-gradient-to-r ${category.color} h-2 rounded-full transition-all duration-1000 group-hover:w-full`}
+                      style={{ width: `${Math.random() * 60 + 20}%` }}
+                    />
+                  </div>
+                </CardContent>
+
+                {/* Decorative elements */}
+                <div className={`absolute top-2 right-2 w-12 h-12 bg-gradient-to-br ${category.color} opacity-10 rounded-full blur-xl group-hover:opacity-20 transition-opacity`} />
+              </Card>
+            </Link>
+          );
+        })}
+      </div>
+    </div>
   );
 };
 

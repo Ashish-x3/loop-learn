@@ -3,101 +3,68 @@ import { useState } from 'react';
 import { User, Brain, Trophy, Target, Home, Plus, BookOpen } from 'lucide-react';
 import { Link, useLocation } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
 
 const FloatingDock = () => {
   const location = useLocation();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
 
   const dockItems = [
-    { 
-      icon: Home, 
-      label: 'Home', 
-      path: '/', 
-      notification: null
-    },
-    { 
-      icon: Brain, 
-      label: 'Learn', 
-      path: '/learn', 
-      notification: '3'
-    },
-    { 
-      icon: Plus, 
-      label: 'Create', 
-      path: '/create', 
-      notification: null
-    },
-    { 
-      icon: BookOpen, 
-      label: 'Saved', 
-      path: '/saved', 
-      notification: '5'
-    },
-    { 
-      icon: Trophy, 
-      label: 'Achievements', 
-      path: '/achievements', 
-      notification: '2'
-    },
-    { 
-      icon: Target, 
-      label: 'Goals', 
-      path: '/goals', 
-      notification: null
-    },
-    { 
-      icon: User, 
-      label: 'Profile', 
-      path: '/profile', 
-      notification: null
-    }
+    { icon: Home, label: 'Home', path: '/' },
+    { icon: Brain, label: 'Learn', path: '/learn' },
+    { icon: Plus, label: 'Create', path: '/create' },
+    { icon: BookOpen, label: 'Saved', path: '/saved' },
+    { icon: Trophy, label: 'Achievements', path: '/achievements' },
+    { icon: Target, label: 'Goals', path: '/goals' },
+    { icon: User, label: 'Profile', path: '/profile' }
   ];
 
   const isActive = (path: string) => location.pathname === path;
 
   return (
     <div className="fixed bottom-6 left-1/2 transform -translate-x-1/2 z-50">
-      <div 
-        className="bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border rounded-2xl shadow-lg p-2"
-        onMouseEnter={() => setIsExpanded(true)}
-        onMouseLeave={() => setIsExpanded(false)}
-      >
-        <div className="flex items-center space-x-1">
+      <div className="backdrop-blur-xl bg-white/80 dark:bg-slate-900/80 border border-white/20 dark:border-slate-700/50 rounded-3xl shadow-2xl shadow-black/10 dark:shadow-black/25 p-3">
+        <div className="flex items-center gap-2">
           {dockItems.map((item, index) => {
             const Icon = item.icon;
             const active = isActive(item.path);
+            const isHovered = hoveredIndex === index;
             
             return (
-              <div key={index} className="relative group">
+              <div 
+                key={index} 
+                className="relative group"
+                onMouseEnter={() => setHoveredIndex(index)}
+                onMouseLeave={() => setHoveredIndex(null)}
+              >
                 {/* Tooltip */}
                 <div 
-                  className={`absolute bottom-full mb-2 left-1/2 transform -translate-x-1/2 px-2 py-1 bg-popover text-popover-foreground text-xs rounded-md opacity-0 group-hover:opacity-100 transition-opacity pointer-events-none whitespace-nowrap border shadow-md ${
-                    isExpanded ? 'translate-y-0' : 'translate-y-1'
+                  className={`absolute bottom-full mb-3 left-1/2 transform -translate-x-1/2 px-3 py-2 bg-slate-900 dark:bg-white text-white dark:text-slate-900 text-sm rounded-xl opacity-0 pointer-events-none transition-all duration-300 whitespace-nowrap ${
+                    isHovered ? 'opacity-100 translate-y-0' : 'opacity-0 translate-y-2'
                   }`}
                 >
                   {item.label}
+                  <div className="absolute top-full left-1/2 transform -translate-x-1/2 w-0 h-0 border-l-4 border-r-4 border-t-4 border-transparent border-t-slate-900 dark:border-t-white" />
                 </div>
 
                 {/* Dock Item */}
                 <Link to={item.path}>
                   <Button
-                    variant={active ? "default" : "ghost"}
-                    size="sm"
-                    className={`relative w-10 h-10 rounded-xl transition-all ${
-                      isExpanded ? 'scale-110' : ''
+                    variant="ghost"
+                    size="icon"
+                    className={`relative w-14 h-14 rounded-2xl transition-all duration-300 ${
+                      active 
+                        ? 'bg-gradient-to-r from-purple-500 to-blue-500 text-white shadow-lg hover:shadow-xl scale-110' 
+                        : 'hover:bg-slate-100 dark:hover:bg-slate-800 hover:scale-110'
+                    } ${
+                      isHovered && !active ? 'scale-125 bg-slate-100 dark:bg-slate-800' : ''
                     }`}
                   >
-                    <Icon className="w-4 h-4" />
+                    <Icon className={`w-6 h-6 transition-all duration-300 ${
+                      active ? 'text-white' : 'text-slate-600 dark:text-slate-300'
+                    }`} />
                     
-                    {/* Notification Badge */}
-                    {item.notification && (
-                      <Badge 
-                        variant="destructive" 
-                        className="absolute -top-1 -right-1 w-4 h-4 p-0 text-xs flex items-center justify-center rounded-full"
-                      >
-                        {item.notification}
-                      </Badge>
+                    {active && (
+                      <div className="absolute inset-0 rounded-2xl bg-gradient-to-r from-purple-500/20 to-blue-500/20 animate-pulse" />
                     )}
                   </Button>
                 </Link>
@@ -106,11 +73,11 @@ const FloatingDock = () => {
           })}
         </div>
 
-        {/* Streak Indicator */}
-        <div className="flex items-center justify-center mt-2 pt-2 border-t">
-          <div className="flex items-center space-x-2 text-xs">
-            <div className="w-1.5 h-1.5 bg-orange-500 rounded-full" />
-            <span className="text-muted-foreground font-medium">7 day streak 🔥</span>
+        {/* Activity indicator */}
+        <div className="flex items-center justify-center mt-3 pt-3 border-t border-slate-200/50 dark:border-slate-700/50">
+          <div className="flex items-center gap-2 text-xs text-slate-500 dark:text-slate-400">
+            <div className="w-2 h-2 bg-green-500 rounded-full animate-pulse" />
+            <span className="font-medium">7 day streak 🔥</span>
           </div>
         </div>
       </div>
