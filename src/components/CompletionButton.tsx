@@ -1,25 +1,31 @@
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Button } from '@/components/ui/button';
 import { CheckCircle, Loader2 } from 'lucide-react';
 import { useProgressTracking } from '@/hooks/useProgressTracking';
+import { useFlashcardProgress } from '@/hooks/useFlashcardProgress';
 import { toast } from 'sonner';
 
 interface CompletionButtonProps {
   flashcardId: string;
-  isCompleted?: boolean;
   onComplete?: () => void;
   className?: string;
 }
 
 const CompletionButton = ({ 
   flashcardId, 
-  isCompleted = false, 
   onComplete,
   className = ""
 }: CompletionButtonProps) => {
-  const [isMarked, setIsMarked] = useState(isCompleted);
+  const [isMarked, setIsMarked] = useState(false);
   const { markAsCompleted, isUpdating } = useProgressTracking();
+  const { data: progress, isLoading } = useFlashcardProgress(flashcardId);
+
+  useEffect(() => {
+    if (progress) {
+      setIsMarked(progress.isCompleted);
+    }
+  }, [progress]);
 
   const handleMarkCompleted = async () => {
     try {
@@ -33,6 +39,19 @@ const CompletionButton = ({
       toast.error('Failed to mark as completed');
     }
   };
+
+  if (isLoading) {
+    return (
+      <Button
+        variant="outline"
+        disabled
+        className={`flex items-center space-x-2 ${className}`}
+      >
+        <Loader2 className="w-4 h-4 animate-spin" />
+        <span>Loading...</span>
+      </Button>
+    );
+  }
 
   if (isMarked) {
     return (

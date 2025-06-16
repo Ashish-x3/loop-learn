@@ -59,10 +59,11 @@ export const useProgressTracking = () => {
         return data;
       }
     },
-    onSuccess: () => {
+    onSuccess: (data, variables) => {
       // Invalidate and refetch progress-related queries
       queryClient.invalidateQueries({ queryKey: ['user-progress'] });
       queryClient.invalidateQueries({ queryKey: ['flashcards'] });
+      queryClient.invalidateQueries({ queryKey: ['flashcard-progress', variables.flashcardId] });
     },
     onError: (error) => {
       console.error('Error updating progress:', error);
@@ -73,8 +74,9 @@ export const useProgressTracking = () => {
     mutationFn: async (flashcardId: string) => {
       return updateProgress.mutateAsync({ flashcardId, isCompleted: true });
     },
-    onSuccess: () => {
+    onSuccess: (data, flashcardId) => {
       queryClient.invalidateQueries({ queryKey: ['user-progress'] });
+      queryClient.invalidateQueries({ queryKey: ['flashcard-progress', flashcardId] });
     }
   });
 
