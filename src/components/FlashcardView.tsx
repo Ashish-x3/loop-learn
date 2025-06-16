@@ -6,7 +6,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { RotateCcw, ArrowLeft, ArrowRight, BookOpen, Code, Lightbulb, Target } from 'lucide-react';
 
 interface FlashcardData {
-  id: number;
+  id: string; // Changed from number to string to match UUID format
   topic: string;
   category: string;
   difficulty: string;
