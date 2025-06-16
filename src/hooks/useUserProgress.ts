@@ -21,22 +21,30 @@ export const useUserProgress = () => {
       const { data: { user } } = await supabase.auth.getUser();
       
       if (!user) {
-        throw new Error('User not authenticated');
+        return {
+          totalCards: 0,
+          masteredCards: 0,
+          accuracy: 0,
+          streak: 0,
+          studyTime: 0,
+          recentActivity: []
+        };
       }
 
       console.log('Fetching user progress for user:', user.id);
 
-      // Get total flashcards count
+      // Get total flashcards count (user's own + public)
       const { data: flashcards, error: flashcardsError } = await supabase
         .from('flashcards')
-        .select('id');
+        .select('id')
+        .or(`user_id.is.null,user_id.eq.${user.id}`);
 
       if (flashcardsError) {
         console.error('Error fetching flashcards:', flashcardsError);
         throw flashcardsError;
       }
 
-      // Get user progress data with more detailed queries
+      // Get user progress data
       const { data: progress, error: progressError } = await supabase
         .from('user_progress')
         .select('*')
@@ -57,7 +65,7 @@ export const useUserProgress = () => {
       const attemptedCards = progress?.length || 0;
       const accuracy = attemptedCards > 0 ? Math.round((masteredCards / attemptedCards) * 100) : 0;
       
-      // Calculate streak based on recent activity (consecutive days with reviews)
+      // Calculate streak based on recent activity
       const today = new Date();
       const recentDays = progress?.filter(p => {
         if (!p.last_reviewed) return false;
@@ -66,16 +74,15 @@ export const useUserProgress = () => {
         return daysDiff <= 7;
       }).length || 0;
 
-      // Calculate study time based on attempts (rough estimate: 1 minute per attempt)
+      // Calculate study time (rough estimate)
       const studyTime = totalAttempts;
 
-      // Generate recent activity data based on actual progress
+      // Generate recent activity data
       const recentActivity = Array.from({ length: 7 }, (_, i) => {
         const date = new Date();
         date.setDate(date.getDate() - i);
         const dateStr = date.toISOString().split('T')[0];
         
-        // Count cards studied on this date
         const cardsStudiedOnDate = progress?.filter(p => {
           if (!p.last_reviewed) return false;
           const reviewDateStr = new Date(p.last_reviewed).toISOString().split('T')[0];
@@ -100,6 +107,8 @@ export const useUserProgress = () => {
       console.log('Calculated user progress:', result);
       return result;
     },
-    refetchInterval: 5000, // Refetch every 5 seconds to keep data current
+    refetchInterval: 30000, // Refetch every 30 seconds for better performance
+    staleTime: 1000 * 60 * 2, // 2 minutes stale time
+    retry: 1,
   });
 };

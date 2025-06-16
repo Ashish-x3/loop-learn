@@ -7,8 +7,10 @@ import { Link, useParams, useNavigate } from 'react-router-dom';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import FlashcardView from '@/components/FlashcardView';
 import FloatingDock from '@/components/FloatingDock';
+import CompletionButton from '@/components/CompletionButton';
+import PWAInstallButton from '@/components/PWAInstallButton';
 import { useFlashcards } from '@/hooks/useFlashcards';
-import { supabase } from '@/integrations/supabase/client';
+import { useProgressTracking } from '@/hooks/useProgressTracking';
 
 const LearnMode = () => {
   const { topic: urlTopic } = useParams();
@@ -22,21 +24,17 @@ const LearnMode = () => {
     urlTopic ? decodeURIComponent(urlTopic) : undefined
   );
 
-  // Use the general useFlashcards hook
+  const { updateProgress } = useProgressTracking();
   const { data: allFlashcards = [], isLoading, error } = useFlashcards();
   
-  // --- Build topic list from user cards ---
   const uniqueTopics: string[] = Array.from(
     new Set(allFlashcards.map(card => card.topic))
   );
 
-  // --- Choose effective topic selection:
-  // (1) URL wins (if present and valid), (2) else selectedTopic, (3) else first topic available
   const actualTopic = urlTopic
     ? decodeURIComponent(urlTopic.replace(/-/g, ' '))
     : selectedTopic ?? uniqueTopics[0];
 
-  // Filter flashcards by exact topic match with strict comparison
   const flashcards = allFlashcards.filter(card =>
     card.topic.toLowerCase() === actualTopic?.toLowerCase()
   );
@@ -44,7 +42,6 @@ const LearnMode = () => {
   console.log('Topic from URL:', urlTopic);
   console.log('All available topics:', [...new Set(allFlashcards.map(f => f.topic))]);
   console.log('Filtered flashcards count:', flashcards.length);
-  console.log('Filtered flashcards topics:', [...new Set(flashcards.map(f => f.topic))]);
 
   // Reset state when topic changes
   useEffect(() => {
@@ -62,60 +59,6 @@ const LearnMode = () => {
     setIsDarkMode(newTheme);
     document.documentElement.classList.toggle('dark', newTheme);
     localStorage.setItem('theme', newTheme ? 'dark' : 'light');
-  };
-
-  const updateUserProgress = async (flashcardId: string, isCompleted: boolean = false) => {
-    try {
-      const { data: { user } } = await supabase.auth.getUser();
-      if (!user) return;
-
-      console.log('Updating progress for flashcard:', flashcardId, 'completed:', isCompleted);
-
-      // Check if progress record exists
-      const { data: existingProgress } = await supabase
-        .from('user_progress')
-        .select('*')
-        .eq('user_id', user.id)
-        .eq('flashcard_id', flashcardId)
-        .maybeSingle();
-
-      if (existingProgress) {
-        // Update existing progress
-        const { error } = await supabase
-          .from('user_progress')
-          .update({
-            attempts: (existingProgress.attempts || 0) + 1,
-            is_mastered: isCompleted,
-            last_reviewed: new Date().toISOString()
-          })
-          .eq('id', existingProgress.id);
-
-        if (error) {
-          console.error('Error updating progress:', error);
-        } else {
-          console.log('Progress updated successfully for card:', flashcardId);
-        }
-      } else {
-        // Create new progress record
-        const { error } = await supabase
-          .from('user_progress')
-          .insert({
-            user_id: user.id,
-            flashcard_id: flashcardId,
-            attempts: 1,
-            is_mastered: isCompleted,
-            last_reviewed: new Date().toISOString()
-          });
-
-        if (error) {
-          console.error('Error creating progress:', error);
-        } else {
-          console.log('Progress created successfully for card:', flashcardId);
-        }
-      }
-    } catch (error) {
-      console.error('Error in updateUserProgress:', error);
-    }
   };
 
   if (isLoading) {
@@ -144,7 +87,6 @@ const LearnMode = () => {
     );
   }
 
-  // --- If no topic found but user has cards, prompt topic selection ---
   if (!actualTopic && uniqueTopics.length) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -170,7 +112,6 @@ const LearnMode = () => {
     );
   }
 
-  // Show message if no flashcards found for specific topic
   if (!flashcards.length) {
     return (
       <div className="min-h-screen bg-background flex items-center justify-center">
@@ -210,7 +151,6 @@ const LearnMode = () => {
   const currentCard = flashcards[currentCardIndex];
   const progress = flashcards.length > 0 ? ((currentCardIndex + 1) / flashcards.length) * 100 : 0;
 
-  // Slugify utility for URL navigation
   const slugify = (topic: string) =>
     encodeURIComponent(topic.toLowerCase().replace(/\s+/g, '-'));
 
@@ -221,8 +161,14 @@ const LearnMode = () => {
 
   const handleNext = async () => {
     if (currentCard && !completedCards.includes(currentCard.id)) {
-      await updateUserProgress(currentCard.id.toString(), true);
-      setCompletedCards([...completedCards, currentCard.id]);
+      try {
+        await updateProgress.mutateAsync({
+          flashcardId: currentCard.id.toString(),
+          isCompleted: false
+        });
+      } catch (error) {
+        console.error('Error updating progress:', error);
+      }
     }
 
     if (currentCardIndex < flashcards.length - 1) {
@@ -243,7 +189,20 @@ const LearnMode = () => {
 
   const handleCardViewed = async () => {
     if (currentCard) {
-      await updateUserProgress(currentCard.id.toString(), false);
+      try {
+        await updateProgress.mutateAsync({
+          flashcardId: currentCard.id.toString(),
+          isCompleted: false
+        });
+      } catch (error) {
+        console.error('Error tracking card view:', error);
+      }
+    }
+  };
+
+  const handleCardCompleted = () => {
+    if (currentCard && !completedCards.includes(currentCard.id)) {
+      setCompletedCards([...completedCards, currentCard.id]);
     }
   };
 
@@ -267,14 +226,12 @@ const LearnMode = () => {
       <header className="border-b sticky top-0 z-40 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60">
         <div className="container mx-auto px-3 sm:px-4 py-3 sm:py-4">
           <div className="flex items-center justify-between gap-3">
-            {/* Left side - Back button */}
             <Link to="/dashboard">
               <Button variant="ghost" size="sm" className="p-2 h-9 w-9">
                 <ArrowLeft className="w-4 h-4" />
               </Button>
             </Link>
             
-            {/* Center - Title and progress */}
             <div className="flex-1 text-center">
               <h1 className="text-lg font-semibold capitalize">{actualTopic}</h1>
               <p className="text-sm text-muted-foreground">
@@ -282,15 +239,17 @@ const LearnMode = () => {
               </p>
             </div>
             
-            {/* Right side - Theme toggle */}
-            <Button
-              onClick={toggleTheme}
-              size="sm"
-              variant="ghost"
-              className="h-9 w-9 p-0"
-            >
-              {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
-            </Button>
+            <div className="flex items-center space-x-2">
+              <PWAInstallButton />
+              <Button
+                onClick={toggleTheme}
+                size="sm"
+                variant="ghost"
+                className="h-9 w-9 p-0"
+              >
+                {isDarkMode ? <Sun className="w-4 h-4" /> : <Moon className="w-4 h-4" />}
+              </Button>
+            </div>
           </div>
         </div>
       </header>
@@ -326,11 +285,6 @@ const LearnMode = () => {
           </Badge>
         </div>
 
-        {/* Debug info */}
-        <div className="text-xs text-muted-foreground text-center">
-          Topic: {actualTopic} | Cards: {flashcards.length} | Current: {currentCard?.topic}
-        </div>
-
         {/* Flashcard */}
         <div className="px-1 sm:px-0">
           <FlashcardView
@@ -339,6 +293,16 @@ const LearnMode = () => {
             onPrevious={currentCardIndex > 0 ? handlePrevious : undefined}
             onCardViewed={handleCardViewed}
             showNavigation={true}
+          />
+        </div>
+
+        {/* Completion Button */}
+        <div className="flex justify-center mt-6">
+          <CompletionButton
+            flashcardId={currentCard.id.toString()}
+            isCompleted={completedCards.includes(currentCard.id)}
+            onComplete={handleCardCompleted}
+            className="w-full max-w-md"
           />
         </div>
 

@@ -32,18 +32,16 @@ const transformFlashcard = (card: Flashcard) => {
         codeExample: parsedAnswer.codeExample || "",
       };
     } else {
-      // Fallback for old format or if answer is not an object
       backContent.definition = card.answer;
     }
   } catch (error) {
-    // Fallback for old format (answer is just a string) or invalid JSON
     backContent.definition = card.answer;
   }
 
   return {
-    id: parseInt(card.id.slice(-8), 16), // Convert string ID to number for compatibility
+    id: parseInt(card.id.slice(-8), 16),
     topic: card.topic,
-    category: card.topic, // Use topic as category
+    category: card.topic,
     difficulty: card.difficulty as "Beginner" | "Intermediate" | "Advanced",
     front: card.question,
     back: backContent,
@@ -54,10 +52,19 @@ export const useFlashcards = (topic?: string) => {
   return useQuery({
     queryKey: ['flashcards', topic],
     queryFn: async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      
       let query = supabase
         .from('flashcards')
         .select('*')
         .order('created_at', { ascending: false });
+
+      // Show user's own cards and public cards (where user_id is null)
+      if (user) {
+        query = query.or(`user_id.is.null,user_id.eq.${user.id}`);
+      } else {
+        query = query.is('user_id', null);
+      }
 
       if (topic) {
         query = query.eq('topic', topic.toLowerCase());
@@ -72,6 +79,8 @@ export const useFlashcards = (topic?: string) => {
 
       return (data as Flashcard[]).map(transformFlashcard);
     },
+    staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
   });
 };
 
@@ -79,11 +88,22 @@ export const useFlashcardsByTopic = (topic: string) => {
   return useQuery({
     queryKey: ['flashcards', 'topic', topic],
     queryFn: async () => {
-      const { data, error } = await supabase
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      let query = supabase
         .from('flashcards')
         .select('*')
         .eq('topic', topic.toLowerCase())
         .order('created_at', { ascending: false });
+
+      // Show user's own cards and public cards
+      if (user) {
+        query = query.or(`user_id.is.null,user_id.eq.${user.id}`);
+      } else {
+        query = query.is('user_id', null);
+      }
+
+      const { data, error } = await query;
 
       if (error) {
         console.error('Error fetching flashcards by topic:', error);
@@ -93,5 +113,7 @@ export const useFlashcardsByTopic = (topic: string) => {
       return (data as Flashcard[]).map(transformFlashcard);
     },
     enabled: !!topic,
+    staleTime: 1000 * 60 * 5,
+    retry: 2,
   });
 };
