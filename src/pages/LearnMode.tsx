@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -301,7 +300,6 @@ const LearnMode = () => {
         <div className="flex justify-center mt-6">
           <CompletionButton
             flashcardId={currentCard.id}
-            isCompleted={completedCards.includes(currentCard.id)}
             onComplete={handleCardCompleted}
             className="w-full max-w-md"
           />
