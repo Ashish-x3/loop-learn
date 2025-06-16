@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from 'react';
 import { Progress } from '@/components/ui/progress';
 import { Button } from '@/components/ui/button';
@@ -16,7 +17,7 @@ const LearnMode = () => {
   const { topic: urlTopic } = useParams();
   const navigate = useNavigate();
   const [currentCardIndex, setCurrentCardIndex] = useState(0);
-  const [completedCards, setCompletedCards] = useState<number[]>([]);
+  const [completedCards, setCompletedCards] = useState<string[]>([]);
   const [isDarkMode, setIsDarkMode] = useState(() => {
     return document.documentElement.classList.contains('dark');
   });
@@ -163,7 +164,7 @@ const LearnMode = () => {
     if (currentCard && !completedCards.includes(currentCard.id)) {
       try {
         await updateProgress.mutateAsync({
-          flashcardId: currentCard.id.toString(),
+          flashcardId: currentCard.id,
           isCompleted: false
         });
       } catch (error) {
@@ -191,7 +192,7 @@ const LearnMode = () => {
     if (currentCard) {
       try {
         await updateProgress.mutateAsync({
-          flashcardId: currentCard.id.toString(),
+          flashcardId: currentCard.id,
           isCompleted: false
         });
       } catch (error) {
@@ -299,7 +300,7 @@ const LearnMode = () => {
         {/* Completion Button */}
         <div className="flex justify-center mt-6">
           <CompletionButton
-            flashcardId={currentCard.id.toString()}
+            flashcardId={currentCard.id}
             isCompleted={completedCards.includes(currentCard.id)}
             onComplete={handleCardCompleted}
             className="w-full max-w-md"

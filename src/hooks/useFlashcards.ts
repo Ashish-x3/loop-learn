@@ -39,7 +39,7 @@ const transformFlashcard = (card: Flashcard) => {
   }
 
   return {
-    id: parseInt(card.id.slice(-8), 16),
+    id: card.id, // Keep the original UUID string instead of converting to integer
     topic: card.topic,
     category: card.topic,
     difficulty: card.difficulty as "Beginner" | "Intermediate" | "Advanced",

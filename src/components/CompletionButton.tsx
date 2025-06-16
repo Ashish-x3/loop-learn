@@ -23,6 +23,7 @@ const CompletionButton = ({
 
   const handleMarkCompleted = async () => {
     try {
+      console.log('Marking as completed with flashcard ID:', flashcardId);
       await markAsCompleted.mutateAsync(flashcardId);
       setIsMarked(true);
       toast.success('Card marked as completed!');
