@@ -5,7 +5,6 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/com
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Link } from 'react-router-dom';
-import { useFlashcards } from '@/hooks/useFlashcards';
 import { useCategories } from '@/hooks/useCategories';
 import FloatingDock from '@/components/FloatingDock';
 
@@ -161,13 +160,13 @@ const SavedFlashcards = () => {
                         </h4>
                         <div className="grid gap-2">
                           {categoryData.topics.map((topic) => (
-                            <Link key={topic} to={`/learn/${topic.toLowerCase().replace(/\s+/g, '-')}`}>
+                            <Link key={topic} to={`/learn/${encodeURIComponent(topic.toLowerCase().replace(/\s+/g, '-'))}`}>
                               <Button 
                                 variant="ghost" 
                                 className="w-full justify-start h-auto p-3 text-left hover:bg-primary/5"
                               >
                                 <div>
-                                  <div className="font-medium capitalize">{topic.replace(/-/g, ' ')}</div>
+                                  <div className="font-medium capitalize">{topic}</div>
                                   <div className="text-xs text-muted-foreground">Start learning</div>
                                 </div>
                               </Button>

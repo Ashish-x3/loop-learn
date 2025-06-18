@@ -64,6 +64,7 @@ export const useProgressTracking = () => {
       queryClient.invalidateQueries({ queryKey: ['user-progress'] });
       queryClient.invalidateQueries({ queryKey: ['flashcards'] });
       queryClient.invalidateQueries({ queryKey: ['flashcard-progress', variables.flashcardId] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     },
     onError: (error) => {
       console.error('Error updating progress:', error);
@@ -77,6 +78,7 @@ export const useProgressTracking = () => {
     onSuccess: (data, flashcardId) => {
       queryClient.invalidateQueries({ queryKey: ['user-progress'] });
       queryClient.invalidateQueries({ queryKey: ['flashcard-progress', flashcardId] });
+      queryClient.invalidateQueries({ queryKey: ['categories'] });
     }
   });
 

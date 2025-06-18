@@ -1,41 +1,60 @@
 
 import { useQuery } from '@tanstack/react-query';
-import { useFlashcards } from './useFlashcards';
+import { supabase } from '@/integrations/supabase/client';
 
-interface CategoryData {
+export interface CategoryData {
   category: string;
   count: number;
   topics: string[];
 }
 
 export const useCategories = () => {
-  const { data: flashcards = [], isLoading: flashcardsLoading, error: flashcardsError } = useFlashcards();
-
   return useQuery({
-    queryKey: ['categories', flashcards],
+    queryKey: ['categories'],
     queryFn: async (): Promise<CategoryData[]> => {
-      const categoryMap = new Map<string, Set<string>>();
+      const { data: { user } } = await supabase.auth.getUser();
+      
+      let query = supabase
+        .from('flashcards')
+        .select('topic');
 
-      flashcards.forEach(flashcard => {
-        const category = flashcard.category || flashcard.topic;
-        const topic = flashcard.topic;
+      // Show user's own cards and public cards
+      if (user) {
+        query = query.or(`user_id.is.null,user_id.eq.${user.id}`);
+      } else {
+        query = query.is('user_id', null);
+      }
+
+      const { data: flashcards, error } = await query;
+
+      if (error) {
+        console.error('Error fetching categories:', error);
+        throw error;
+      }
+
+      // Group flashcards by topic to create categories
+      const topicCounts: Record<string, Set<string>> = {};
+      
+      flashcards?.forEach(card => {
+        const topic = card.topic;
+        const category = topic; // For now, each topic is its own category
         
-        if (!categoryMap.has(category)) {
-          categoryMap.set(category, new Set());
+        if (!topicCounts[category]) {
+          topicCounts[category] = new Set();
         }
-        categoryMap.get(category)!.add(topic);
+        topicCounts[category].add(topic);
       });
 
-      const categories: CategoryData[] = Array.from(categoryMap.entries()).map(([category, topics]) => ({
+      // Convert to CategoryData format
+      const categories: CategoryData[] = Object.entries(topicCounts).map(([category, topics]) => ({
         category,
         count: topics.size,
-        topics: Array.from(topics).sort()
+        topics: Array.from(topics)
       }));
 
-      console.log('Categories processed:', categories);
-      return categories.sort((a, b) => b.count - a.count);
+      return categories.sort((a, b) => a.category.localeCompare(b.category));
     },
-    enabled: !flashcardsLoading && !flashcardsError,
     staleTime: 1000 * 60 * 5, // 5 minutes
+    retry: 2,
   });
 };
